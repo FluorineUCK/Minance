@@ -1,6 +1,6 @@
 # Minance
 
-Minance 是从 FluorineUCK's Lib 中拆出的独立金融模拟 NeoForge 模组。当前目标是在 Minecraft 世界里把村民、村庄、商品供需、公司股权、指数、衍生品、基金和结构化产品串成一个可持久化的市场系统，并通过 LDLib2 面板展示市场状态。
+Minance 是一个独立金融模拟 NeoForge 模组。当前目标是在 Minecraft 世界里把村民、村庄、商品供需、公司股权、指数、衍生品、基金和结构化产品串成一个可持久化的市场系统，并通过 LDLib2 面板展示市场状态。
 
 ## 基本信息
 
