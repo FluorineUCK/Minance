@@ -820,7 +820,9 @@ These items stay product-agnostic under `market/financial/`.
 
 ## Implementation Order
 
-- [ ] Phase 1: Introduce generic `PriceSignal` and `FundamentalAnchor` under `market/financial/`.
+- [x] Phase 1: Introduce generic `PriceSignal` and `FundamentalAnchor` under `market/financial/`.
+  - Added immutable `PriceSignal`, `FundamentalAnchor`, direction/source/type enums, and `PriceSignalBundle` as the future generic engine input carrier.
+  - Current pricing behavior is unchanged; later phases can adapt product modules into this bundle before changing `FinancialMarketEngine.update(...)`.
 - [ ] Phase 2: Add equity/company adapter under `product/equity/` while keeping raw company fields in `entity/company/`.
 - [ ] Phase 3: Extend `CompanyFinancialReport` to carry realistic accounting metrics.
 - [ ] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
