@@ -11,12 +11,14 @@ import java.util.Map;
 public record FinanceConfig(
         Map<String, ProductMarketParameters> products,
         DerivativePricing derivative,
-        FundRules fund
+        FundRules fund,
+        EquitySignalRules equitySignal
 ) {
     public static final Codec<FinanceConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.unboundedMap(Codec.STRING, ProductMarketParameters.CODEC).fieldOf("products").forGetter(FinanceConfig::products),
             DerivativePricing.CODEC.fieldOf("derivative").forGetter(FinanceConfig::derivative),
-            FundRules.CODEC.fieldOf("fund").forGetter(FinanceConfig::fund)
+            FundRules.CODEC.fieldOf("fund").forGetter(FinanceConfig::fund),
+            EquitySignalRules.CODEC.optionalFieldOf("equity_signal", EquitySignalRules.defaults()).forGetter(FinanceConfig::equitySignal)
     ).apply(instance, FinanceConfig::new));
 
     public static FinanceConfig defaults() {
@@ -30,7 +32,8 @@ public record FinanceConfig(
         return new FinanceConfig(
                 Map.copyOf(products),
                 new DerivativePricing(1, 100, 24_000L, 0.0005D, 0.05D, 0.001D, 100),
-                new FundRules(8)
+                new FundRules(8),
+                EquitySignalRules.defaults()
         );
     }
 
@@ -88,5 +91,25 @@ public record FinanceConfig(
         public static final Codec<FundRules> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.INT.fieldOf("index_tracking_max_equities").forGetter(FundRules::indexTrackingMaxEquities)
         ).apply(instance, FundRules::new));
+    }
+
+    public record EquitySignalRules(
+            long signalHorizonTicks,
+            double navAnchorConfidence,
+            double performanceSignalMultiplier,
+            double performanceSignalConfidence,
+            double maxSignalStrength
+    ) {
+        public static final Codec<EquitySignalRules> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.LONG.fieldOf("signal_horizon_ticks").forGetter(EquitySignalRules::signalHorizonTicks),
+                Codec.DOUBLE.fieldOf("nav_anchor_confidence").forGetter(EquitySignalRules::navAnchorConfidence),
+                Codec.DOUBLE.fieldOf("performance_signal_multiplier").forGetter(EquitySignalRules::performanceSignalMultiplier),
+                Codec.DOUBLE.fieldOf("performance_signal_confidence").forGetter(EquitySignalRules::performanceSignalConfidence),
+                Codec.DOUBLE.fieldOf("max_signal_strength").forGetter(EquitySignalRules::maxSignalStrength)
+        ).apply(instance, EquitySignalRules::new));
+
+        public static EquitySignalRules defaults() {
+            return new EquitySignalRules(2_400L, 0.85D, 1.0D, 0.75D, 1.0D);
+        }
     }
 }

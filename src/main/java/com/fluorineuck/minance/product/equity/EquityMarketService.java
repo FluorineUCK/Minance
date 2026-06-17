@@ -1,6 +1,9 @@
 package com.fluorineuck.minance.product.equity;
 
+import com.fluorineuck.minance.config.ConfigRegistry;
+import com.fluorineuck.minance.entity.company.CompanyFinancialReport;
 import com.fluorineuck.minance.entity.company.VillageCompany;
+import com.fluorineuck.minance.market.financial.PriceSignalBundle;
 
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -11,6 +14,7 @@ public final class EquityMarketService {
     public static final EquityMarketService INSTANCE = new EquityMarketService();
 
     private final Map<String, EquityAsset> assets = new LinkedHashMap<>();
+    private final EquitySignalAdapter signalAdapter = new EquitySignalAdapter();
 
     private EquityMarketService() {
     }
@@ -39,6 +43,21 @@ public final class EquityMarketService {
 
     public List<EquityAsset> sortedAssets() {
         return assets.values().stream().sorted(Comparator.comparing(EquityAsset::companyId).thenComparing(asset -> asset.type().getSerializedName())).toList();
+    }
+
+    public PriceSignalBundle priceSignals(VillageCompany company) {
+        String id = equityId(company.id(), EquityAssetType.COMMON_STOCK);
+        EquityAsset asset = assets.getOrDefault(id, new EquityAsset(id, company.id(), company.name() + " " + EquityAssetType.COMMON_STOCK.getSerializedName(), EquityAssetType.COMMON_STOCK, company.totalShares(), company.sharePrice(), true));
+        return priceSignals(asset, company.latestFinancialReport(), company.reportedNavPerShare());
+    }
+
+    public PriceSignalBundle priceSignals(EquityAsset asset, CompanyFinancialReport report) {
+        long fallbackNav = report == null ? asset.price() : report.navPerShare();
+        return priceSignals(asset, report, fallbackNav);
+    }
+
+    public PriceSignalBundle priceSignals(EquityAsset asset, CompanyFinancialReport report, long fallbackNavPerShare) {
+        return signalAdapter.fromReport(asset, report, fallbackNavPerShare, ConfigRegistry.INSTANCE.finance().equitySignal());
     }
 
     private void put(VillageCompany company, EquityAssetType type, int units, boolean tradable) {

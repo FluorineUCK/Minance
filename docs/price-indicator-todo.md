@@ -287,12 +287,14 @@ Company-specific raw fields stay in `entity/company/`; only converted equity sig
   - Earnings growth.
   - Cash-flow growth.
 
-- [ ] Add an equity signal adapter in `product/equity/`.
+- [x] Add an equity signal adapter in `product/equity/`.
   - Convert company NAV into a fundamental anchor.
   - Convert earnings growth into positive/negative price pressure.
   - Convert margin deterioration into negative price pressure.
   - Convert issuer credit assessment or `UNRATED` state into risk discount after the credit model exists.
   - Convert dividend or retained earnings into shareholder return expectation.
+  - Current implementation: `EquityMarketService.INSTANCE.priceSignals(...)` emits a NAV `FundamentalAnchor` and an earnings/performance `PriceSignal` from existing `CompanyFinancialReport` fields.
+  - Deferred: margin deterioration, issuer credit assessment, dividends, and retained earnings wait for Phase 3 accounting metrics and Phase 18 credit assessment records.
 
 - [ ] Keep equity asset pricing in `product/equity/`.
   - Common stock, founder stock, preferred stock, treasury share, and pre-IPO stock should share generic equity pricing inputs where possible.
@@ -823,7 +825,9 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 1: Introduce generic `PriceSignal` and `FundamentalAnchor` under `market/financial/`.
   - Added immutable `PriceSignal`, `FundamentalAnchor`, direction/source/type enums, and `PriceSignalBundle` as the future generic engine input carrier.
   - Current pricing behavior is unchanged; later phases can adapt product modules into this bundle before changing `FinancialMarketEngine.update(...)`.
-- [ ] Phase 2: Add equity/company adapter under `product/equity/` while keeping raw company fields in `entity/company/`.
+- [x] Phase 2: Add equity/company adapter under `product/equity/` while keeping raw company fields in `entity/company/`.
+  - Added a focused `EquitySignalAdapter` behind `EquityMarketService.INSTANCE.priceSignals(...)`.
+  - Raw company reports remain in `entity/company`; the market-facing output is a generic `PriceSignalBundle`.
 - [ ] Phase 3: Extend `CompanyFinancialReport` to carry realistic accounting metrics.
 - [ ] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
 - [ ] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
