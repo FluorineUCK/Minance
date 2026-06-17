@@ -1,0 +1,18 @@
+{
+  "id": "minance:librarian",
+  "profession": "minecraft:librarian",
+  "expected_shares": 22,
+  "product_items": ["minecraft:book", "minecraft:bookshelf"],
+  "preferred_futures_markets": ["minance:food_0dte", "minance:tools_0dte"],
+  "demand_items": ["minecraft:paper", "minecraft:emerald"],
+  "risk_preference": 0.42,
+  "min_trade_interval_ticks": 900,
+  "max_trade_interval_ticks": 2600,
+  "target_profit": 150,
+  "production_income": 70,
+  "derivative_proxy_level": 4,
+  "derivative_demand_weight": 1.0,
+  "allow_non_zero_futures": false,
+  "max_futures_duration_ticks": 2400,
+  "spot_demand_budget_ratio": 0.15
+}

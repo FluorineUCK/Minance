@@ -1,0 +1,64 @@
+{
+  "products": {
+    "equity": {
+      "default_volatility": 0.08,
+      "base_liquidity": 18.0,
+      "decay_age_multiplier": 0.65,
+      "decay_distance_multiplier": 0.75,
+      "decay_volatility_multiplier": 0.75,
+      "maturity_lambda": 0.0
+    },
+    "future": {
+      "default_volatility": 0.1,
+      "base_liquidity": 12.0,
+      "decay_age_multiplier": 1.0,
+      "decay_distance_multiplier": 1.0,
+      "decay_volatility_multiplier": 1.0,
+      "maturity_lambda": 0.2
+    },
+    "option": {
+      "default_volatility": 0.18,
+      "base_liquidity": 7.0,
+      "decay_age_multiplier": 1.45,
+      "decay_distance_multiplier": 1.35,
+      "decay_volatility_multiplier": 1.4,
+      "maturity_lambda": 0.55
+    },
+    "fund": {
+      "default_volatility": 0.045,
+      "base_liquidity": 10.0,
+      "decay_age_multiplier": 1.0,
+      "decay_distance_multiplier": 0.9,
+      "decay_volatility_multiplier": 0.9,
+      "maturity_lambda": 0.12
+    },
+    "bond": {
+      "default_volatility": 0.025,
+      "base_liquidity": 5.0,
+      "decay_age_multiplier": 0.45,
+      "decay_distance_multiplier": 0.55,
+      "decay_volatility_multiplier": 0.45,
+      "maturity_lambda": 0.05
+    },
+    "structured_product": {
+      "default_volatility": 0.12,
+      "base_liquidity": 6.0,
+      "decay_age_multiplier": 1.2,
+      "decay_distance_multiplier": 1.1,
+      "decay_volatility_multiplier": 1.2,
+      "maturity_lambda": 0.25
+    }
+  },
+  "derivative": {
+    "max_depth": 1,
+    "max_days": 100,
+    "ticks_per_market_day": 24000,
+    "futures_carry_per_day": 0.0005,
+    "option_premium_base_rate": 0.05,
+    "option_premium_per_day": 0.001,
+    "option_premium_max_days": 100
+  },
+  "fund": {
+    "index_tracking_max_equities": 8
+  }
+}

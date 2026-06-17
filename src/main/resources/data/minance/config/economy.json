@@ -1,0 +1,6 @@
+{
+  "emerald_fund_value": 100,
+  "default_item_price": 25,
+  "fallback_expected_shares": 1,
+  "fallback_proxy_liquidity_demand": 1.0
+}

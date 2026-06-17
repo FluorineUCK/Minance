@@ -1,0 +1,33 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "minance"
+version = "${file.jarVersion}"
+displayName = "Minance"
+authors = "FluorineUCK"
+description = '''
+A super-accurate modern finance simulation module.
+'''
+
+[[dependencies.minance]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.minance]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1,1.22)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.minance]]
+modId = "ldlib2"
+type = "required"
+versionRange = "[2.2.18,)"
+ordering = "AFTER"
+side = "CLIENT"

@@ -1,0 +1,24 @@
+{
+  "minimum_capital_per_share": 500,
+  "initial_village_funds": 0,
+  "bell_search_radius": 48,
+  "bell_search_vertical_radius": 8,
+  "loaded_village_scan_interval_ticks": 200,
+  "price_history_limit": 160,
+  "financial_report_interval_ticks": 2400,
+  "financial_report_history_limit": 32,
+  "senior_villager_level": 4,
+  "senior_derivative_demand_multiplier": 2.0,
+  "report": {
+    "significant_change_threshold": 0.08,
+    "attraction_multiplier": 1.0,
+    "attraction_demand_floor": 1.0,
+    "minimum_attraction_volume": 1,
+    "performance_nav_weight": 0.7,
+    "performance_income_weight": 0.3,
+    "min_report_change_ratio": 0.0,
+    "max_report_change_ratio": 1.0,
+    "min_performance_change_ratio": -1.0,
+    "max_performance_change_ratio": 1.0
+  }
+}

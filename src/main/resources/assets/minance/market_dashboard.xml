@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ldlib2-ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/Low-Drag-MC/LDLib2/refs/heads/1.21/ldlib2-ui.xsd">
+    <stylesheet location="ldlib2:lss/mc.lss"/>
+    <style>
+        .minance-root {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            align-items: center;
+            justify-content: center;
+            background: color-rect(0x00000000);
+        }
+
+        .minance-dashboard {
+            width: 82%;
+            height: 78%;
+            min-width: 680;
+            min-height: 380;
+            max-width: 900;
+            max-height: 520;
+        }
+    </style>
+    <root id="minance-dashboard-root" class="minance-root">
+        <element id="minance-dashboard-slot" class="minance-dashboard"/>
+    </root>
+</ldlib2-ui>

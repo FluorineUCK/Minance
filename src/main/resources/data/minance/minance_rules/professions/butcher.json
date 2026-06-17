@@ -1,0 +1,18 @@
+{
+  "id": "minance:butcher",
+  "profession": "minecraft:butcher",
+  "expected_shares": 16,
+  "product_items": ["minecraft:cooked_beef", "minecraft:cooked_porkchop"],
+  "preferred_futures_markets": ["minance:food_0dte"],
+  "demand_items": ["minecraft:wheat", "minecraft:coal"],
+  "risk_preference": 0.35,
+  "min_trade_interval_ticks": 600,
+  "max_trade_interval_ticks": 2000,
+  "target_profit": 120,
+  "production_income": 55,
+  "derivative_proxy_level": 4,
+  "derivative_demand_weight": 1.0,
+  "allow_non_zero_futures": false,
+  "max_futures_duration_ticks": 1800,
+  "spot_demand_budget_ratio": 0.22
+}

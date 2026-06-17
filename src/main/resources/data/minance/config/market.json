@@ -1,0 +1,98 @@
+{
+  "settlement_interval_ticks": 600,
+  "index_update_interval_ticks": 400,
+  "price_history_limit": 160,
+  "spot": {
+    "allow_virtual_supply": false,
+    "allow_virtual_demand": false,
+    "inventory_weight": 0.18,
+    "flow_weight": 0.12,
+    "stabilizer_weight": 0.02,
+    "adjustment_speed": 0.2,
+    "max_cycle_change": 0.08,
+    "min_price": 1.0,
+    "max_price": 1000000.0
+  },
+  "stabilizer": {
+    "source_types": [
+      "villager_buy_order",
+      "villager_sell_order",
+      "villager_production"
+    ],
+    "counter_flow_base_probability": 0.04,
+    "counter_flow_deviation_multiplier": 0.75,
+    "counter_flow_max_probability": 0.85,
+    "min_counter_flow_quantity": 1.0,
+    "quantity_base_multiplier": 0.25,
+    "min_quantity_multiplier": 0.25,
+    "max_quantity_multiplier": 1.0,
+    "neutral_counter_flow_multiplier": 0.5,
+    "counter_flow_source_label": "villager_counter_flow"
+  },
+  "financial_microstructure": {
+    "price": {
+      "tick_size": 1.0,
+      "minimum_tick_size": 1.0,
+      "minimum_price": 1
+    },
+    "impact": {
+      "liquidity_impact": 0.035,
+      "liquidity_log_base": 10.0,
+      "min_liquidity_denominator": 1.0,
+      "force_move_imbalance_threshold": 0.15,
+      "consumed_volume_factor": 0.08
+    },
+    "decay": {
+      "age_lambda": 0.015,
+      "distance_lambda": 0.002,
+      "volatility_lambda": 0.8
+    },
+    "volatility": {
+      "min_volatility": 0.001,
+      "realized_volatility_previous_weight": 0.9,
+      "realized_volatility_change_weight": 0.1
+    },
+    "radius": {
+      "minimum_near_radius": 2,
+      "default_near_radius": 5,
+      "option_near_radius": 8
+    },
+    "levels": {
+      "support_age_weight": 0.12,
+      "support_touch_weight": 0.08,
+      "level_prune_liquidity": 0.001,
+      "initial_level_confidence": 1.0,
+      "max_level_confidence": 3.0,
+      "confidence_per_order": 0.01
+    }
+  },
+  "index": {
+    "indices": [
+      {
+        "id": "food_index",
+        "name": "Food Index",
+        "matchers": ["bread", "beef", "porkchop", "chicken", "mutton", "cod", "salmon", "apple"]
+      },
+      {
+        "id": "crops_index",
+        "name": "Crops Index",
+        "matchers": ["wheat", "carrot", "potato", "beetroot", "melon", "pumpkin"]
+      },
+      {
+        "id": "minerals_index",
+        "name": "Minerals Index",
+        "matchers": ["iron", "coal", "copper", "gold", "diamond", "emerald", "redstone", "lapis"]
+      },
+      {
+        "id": "tools_index",
+        "name": "Tools Index",
+        "matchers": ["pickaxe", "axe", "shovel", "hoe", "sword", "helmet", "chestplate", "leggings", "boots"]
+      }
+    ],
+    "volume_imbalance_weight": 0.75,
+    "order_imbalance_weight": 0.25,
+    "order_pressure_weight": 0.1,
+    "max_order_move": 0.06,
+    "volatility_multiplier_cap": 1.0
+  }
+}

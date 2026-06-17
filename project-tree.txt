@@ -1,0 +1,156 @@
+﻿Minance/
+|-- .vscode/
+|   |-- launch.json
+|   +-- settings.json
+|-- comp_mod/
+|   +-- ldlib2-neoforge-1.21.1-2.2.18-all.jar
+|-- gradle/
+|   +-- wrapper/
+|       |-- gradle-wrapper.jar
+|       +-- gradle-wrapper.properties
+|-- src/
+|   +-- main/
+|       |-- java/
+|       |   +-- com/
+|       |       +-- fluorineuck/
+|       |           +-- minance/
+|       |               |-- api/
+|       |               |-- client/
+|       |               |   |-- ui/
+|       |               |   |   |-- elements/
+|       |               |   |   |   |-- MarketChartElement.java
+|       |               |   |   |   |-- MarketDebugPanelElement.java
+|       |               |   |   |   |-- MarketDerivativeSearchElement.java
+|       |               |   |   |   |-- MarketDropdownMenuElement.java
+|       |               |   |   |   |-- MarketOrderFlowElement.java
+|       |               |   |   |   |-- MarketPanelElement.java
+|       |               |   |   |   |-- MarketProductDetailElement.java
+|       |               |   |   |   |-- MarketProductWindowElement.java
+|       |               |   |   |   +-- MarketUiSupport.java
+|       |               |   |   +-- MarketLdLibDashboard.java
+|       |               |   +-- MinanceClientEvents.java
+|       |               |-- command/
+|       |               |   +-- MinanceCommands.java
+|       |               |-- data/
+|       |               |   |-- CodecRuleReloadListener.java
+|       |               |   |-- MinanceReloaders.java
+|       |               |   +-- MinanceSavedData.java
+|       |               |-- entity/
+|       |               |   |-- company/
+|       |               |   |   |-- CompanyService.java
+|       |               |   |   |-- MarketPriceBar.java
+|       |               |   |   |-- VillageCandidate.java
+|       |               |   |   |-- VillageCompany.java
+|       |               |   |   +-- VillageCompanyService.java
+|       |               |   |-- player/
+|       |               |   |-- village/
+|       |               |   |   |-- LoadedVillageScan.java
+|       |               |   |   +-- VillageService.java
+|       |               |   |-- villager/
+|       |               |   |   |-- funder/
+|       |               |   |   +-- VillagerTradeDiscoveryService.java
+|       |               |   +-- wandering_merchant/
+|       |               |-- market/
+|       |               |   |-- event/
+|       |               |   |-- financial/
+|       |               |   |   |-- FinancialMarketEngine.java
+|       |               |   |   |-- FinancialMarketResult.java
+|       |               |   |   |-- FinancialMarketState.java
+|       |               |   |   |-- FinancialProductType.java
+|       |               |   |   |-- LiquiditySurface.java
+|       |               |   |   |-- MarketActivityStats.java
+|       |               |   |   |-- MarketFlowSnapshot.java
+|       |               |   |   |-- PriceLevel.java
+|       |               |   |   +-- TraderArchetype.java
+|       |               |   +-- index/
+|       |               |       |-- MarketIndexService.java
+|       |               |       +-- MarketIndexState.java
+|       |               |-- network/
+|       |               |   |-- packet/
+|       |               |   |   |-- client/
+|       |               |   |   +-- server/
+|       |               |   +-- sync/
+|       |               |-- product/
+|       |               |   |-- commodity/
+|       |               |   |   |-- core/
+|       |               |   |   |   |-- CommodityStabilizationDesk.java
+|       |               |   |   |   +-- CommodityState.java
+|       |               |   |   +-- spot/
+|       |               |   |       |-- SpotMarketAsset.java
+|       |               |   |       |-- SpotMarketEngine.java
+|       |               |   |       |-- SpotMarketRow.java
+|       |               |   |       |-- SpotMarketService.java
+|       |               |   |       |-- SpotMarketSource.java
+|       |               |   |       +-- SpotMarketSourceType.java
+|       |               |   |-- component/
+|       |               |   |   |-- derivative/
+|       |               |   |   |   |-- CommodityDerivativeService.java
+|       |               |   |   |   |-- DerivativeContractStatus.java
+|       |               |   |   |   |-- DerivativeDeliveryMethod.java
+|       |               |   |   |   |-- DerivativeSide.java
+|       |               |   |   |   |-- FuturesContract.java
+|       |               |   |   |   |-- FuturesMarketState.java
+|       |               |   |   |   |-- OptionContract.java
+|       |               |   |   |   |-- OptionMarketState.java
+|       |               |   |   |   +-- OptionRight.java
+|       |               |   |   |-- fund/
+|       |               |   |   |   |-- FundHolding.java
+|       |               |   |   |   |-- FundService.java
+|       |               |   |   |   +-- FundState.java
+|       |               |   |   |-- structured/
+|       |               |   |   |   |-- BeneficiaryClaim.java
+|       |               |   |   |   |-- StructuredProductService.java
+|       |               |   |   |   +-- StructuredProductState.java
+|       |               |   |   +-- GenericProductComponent.java
+|       |               |   |-- equity/
+|       |               |   |   |-- common_stock/
+|       |               |   |   |-- founder_share/
+|       |               |   |   |-- pre_ipo_stock/
+|       |               |   |   |-- preffered_stock/
+|       |               |   |   |-- treasury_share/
+|       |               |   |   |-- EquityAsset.java
+|       |               |   |   |-- EquityAssetType.java
+|       |               |   |   +-- EquityMarketService.java
+|       |               |   |-- insurance/
+|       |               |   +-- liabilities/
+|       |               |-- rule/
+|       |               |   |-- CompanyFormationRule.java
+|       |               |   |-- CompanyNameRule.java
+|       |               |   |-- MinanceRuleRegistries.java
+|       |               |   |-- ProfessionTradeCategoryRule.java
+|       |               |   +-- SpotMarketConfigRule.java
+|       |               +-- Minance.java
+|       +-- resources/
+|           |-- assets/
+|           |   |-- ldlib2/
+|           |   |   |-- models/
+|           |   |   |-- resources/
+|           |   |   |-- shaders/
+|           |   |   +-- trading_view_dashboard.xml
+|           |   +-- minance/
+|           |       |-- lang/
+|           |       |   +-- en_us.json
+|           |       +-- market_dashboard.xml
+|           |-- data/
+|           |   +-- minance/
+|           |       +-- minance_rules/
+|           |           |-- company/
+|           |           |   +-- default.json
+|           |           |-- company_names/
+|           |           |   +-- default.json
+|           |           |-- professions/
+|           |           |   |-- armorer.json
+|           |           |   |-- butcher.json
+|           |           |   |-- farmer.json
+|           |           |   |-- librarian.json
+|           |           |   +-- toolsmith.json
+|           |           +-- spot/
+|           |               +-- default.json
+|           +-- META-INF/
+|               +-- neoforge.mods.toml
+|-- build.gradle
+|-- gradle.properties
+|-- gradlew
+|-- gradlew.bat
+|-- README.md
++-- settings.gradle
