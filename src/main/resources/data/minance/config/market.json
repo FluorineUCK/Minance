@@ -94,5 +94,13 @@
     "order_pressure_weight": 0.1,
     "max_order_move": 0.06,
     "volatility_multiplier_cap": 1.0
+  },
+  "signal_weights": {
+    "fundamental_weight": 1.0,
+    "earnings_weight": 1.0,
+    "flow_weight": 1.0,
+    "risk_weight": 1.0,
+    "liquidity_weight": 1.0,
+    "sentiment_weight": 1.0
   }
 }

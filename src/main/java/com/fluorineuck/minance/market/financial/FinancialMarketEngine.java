@@ -46,15 +46,24 @@ public final class FinancialMarketEngine {
     }
 
     public FinancialMarketResult update(String productId, FinancialProductType type, long currentPrice, double volatility, int maturityDays, long anchorPrice) {
-        MarketConfig.FinancialMicrostructure financial = ConfigRegistry.INSTANCE.market().financialMicrostructure();
+        FinancialProductType resolvedType = resolveType(type);
+        return update(productId, resolvedType, currentPrice, volatility, maturityDays, anchorPrice, PriceSignalBundle.empty(productId, resolvedType));
+    }
+
+    public FinancialMarketResult update(String productId, FinancialProductType type, long currentPrice, double volatility, int maturityDays, long anchorPrice, PriceSignalBundle signalBundle) {
+        FinancialProductType resolvedType = resolveType(type);
+        MarketConfig marketConfig = ConfigRegistry.INSTANCE.market();
+        MarketConfig.FinancialMicrostructure financial = marketConfig.financialMicrostructure();
         FinanceConfig finance = ConfigRegistry.INSTANCE.finance();
-        FinanceConfig.ProductMarketParameters product = finance.product(type);
+        FinanceConfig.ProductMarketParameters product = finance.product(resolvedType);
         double effectiveVolatility = volatility <= 0.0D ? product.defaultVolatility() : volatility;
-        FinancialMarketState state = ensureMarket(productId, type, currentPrice, effectiveVolatility);
+        FinancialMarketState state = ensureMarket(productId, resolvedType, currentPrice, effectiveVolatility);
+        PriceSignalBundle signals = normalizeSignals(productId, resolvedType, signalBundle);
         state.stats().resetCycle();
 
         double tickSize = Math.max(financial.minimumTickSize(), financial.tickSize());
         long currentTick = priceTick(currentPrice, financial);
+        long effectiveAnchorPrice = strongestAnchorPrice(signals, anchorPrice);
         state.surface().decay(
                 currentTick,
                 tickSize,
@@ -65,9 +74,11 @@ public final class FinancialMarketEngine {
                 financial.volatilityLambda() * product.decayVolatilityMultiplier(),
                 product.maturityLambda()
         );
-        generateBehavioralLiquidity(state, currentTick, anchorPrice, tickSize, type, maturityDays, finance, ConfigRegistry.INSTANCE.trading(), financial);
+        TradingConfig trading = ConfigRegistry.INSTANCE.trading();
+        generateBehavioralLiquidity(state, currentTick, effectiveAnchorPrice, tickSize, resolvedType, maturityDays, finance, trading, financial);
+        applySignalLiquidity(state, currentTick, tickSize, resolvedType, finance, trading, financial, marketConfig.signalWeights(), signals);
 
-        int configuredRadius = type == FinancialProductType.OPTION ? financial.optionNearRadius() : financial.defaultNearRadius();
+        int configuredRadius = resolvedType == FinancialProductType.OPTION ? financial.optionNearRadius() : financial.defaultNearRadius();
         int radius = Math.max(financial.minimumNearRadius(), configuredRadius);
         double bid = state.surface().nearBidLiquidity(currentTick, radius);
         double ask = state.surface().nearAskLiquidity(currentTick, radius);
@@ -95,7 +106,62 @@ public final class FinancialMarketEngine {
         state.updateDebug(next, realized, imbalance, bid, ask, supportPrice, resistancePrice);
         int buyVolume = (int) Math.round(state.stats().generatedBuyLiquidity() + state.stats().consumedSellLiquidity());
         int sellVolume = (int) Math.round(state.stats().generatedSellLiquidity() + state.stats().consumedBuyLiquidity());
-        return new FinancialMarketResult(productId, type, currentPrice, next, Math.max(currentPrice, next), Math.min(currentPrice, next), buyVolume, sellVolume, imbalance, bid, ask, supportPrice, resistancePrice, state.stats());
+        return new FinancialMarketResult(productId, resolvedType, currentPrice, next, Math.max(currentPrice, next), Math.min(currentPrice, next), buyVolume, sellVolume, imbalance, bid, ask, supportPrice, resistancePrice, state.stats());
+    }
+
+    private static FinancialProductType resolveType(FinancialProductType type) {
+        return type == null ? FinancialProductType.STRUCTURED_PRODUCT : type;
+    }
+
+    private static PriceSignalBundle normalizeSignals(String productId, FinancialProductType type, PriceSignalBundle signalBundle) {
+        if (signalBundle == null) {
+            return PriceSignalBundle.empty(productId, type);
+        }
+        if (!productId.equals(signalBundle.productId()) || type != signalBundle.productType()) {
+            throw new IllegalArgumentException("signal bundle product does not match market update product");
+        }
+        return signalBundle;
+    }
+
+    private static long strongestAnchorPrice(PriceSignalBundle signals, long fallbackAnchorPrice) {
+        return signals.strongestAnchor().map(FundamentalAnchor::anchorPrice).orElse(fallbackAnchorPrice);
+    }
+
+    private static void applySignalLiquidity(
+            FinancialMarketState state,
+            long currentTick,
+            double tickSize,
+            FinancialProductType type,
+            FinanceConfig finance,
+            TradingConfig trading,
+            MarketConfig.FinancialMicrostructure financial,
+            MarketConfig.SignalWeights weights,
+            PriceSignalBundle signals
+    ) {
+        if (signals.signals().isEmpty()) {
+            return;
+        }
+        double scale = Math.max(0.0D, finance.product(type).baseLiquidity());
+        int orders = Math.max(0, trading.orderFlow().minimumInjectedOrders());
+        for (PriceSignal signal : signals.signals()) {
+            long signalTick = signal.hasAnchor() ? priceTick(signal.anchorPrice(), financial) : currentTick;
+            if (signal.liquidityBid() > 0.0D) {
+                state.surface().addBid(signalTick, signal.liquidityBid(), orders, state.stats());
+            }
+            if (signal.liquidityAsk() > 0.0D) {
+                state.surface().addAsk(signalTick, signal.liquidityAsk(), orders, state.stats());
+            }
+            double weightedStrength = signal.signedStrength() * Math.max(0.0D, weights.weight(signal.source()));
+            double liquidity = Math.abs(weightedStrength) * scale;
+            if (liquidity <= 0.0D) {
+                continue;
+            }
+            if (weightedStrength > 0.0D) {
+                state.surface().addBid(signalTick, liquidity, orders, state.stats());
+            } else {
+                state.surface().addAsk(signalTick, liquidity, orders, state.stats());
+            }
+        }
     }
 
     public CompoundTag save() {

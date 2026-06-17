@@ -83,12 +83,13 @@ This TODO defines how real-world style indicators should affect product prices, 
   - Examples: NAV, replacement cost, spot price, index value, discounted payoff, liquidation value.
   - The engine should consume anchors generically instead of knowing company fields.
 
-- [ ] Change `FinancialMarketEngine.update(...)` to consume a bundle of price signals.
+- [x] Change `FinancialMarketEngine.update(...)` to consume a bundle of price signals.
   - Existing order-flow imbalance remains a signal.
   - Anchoring, mean reversion, momentum, panic, and liquidity impact should use generic signal inputs.
   - Company NAV must enter as an equity anchor, not as a company-specific dependency inside `market/financial`.
+  - Current implementation: added `FinancialMarketEngine.update(..., PriceSignalBundle)`; the existing overload delegates to an empty bundle, preserving current behavior.
 
-- [ ] Add config weights for signal groups.
+- [x] Add config weights for signal groups.
   - `fundamental_weight`
   - `earnings_weight`
   - `flow_weight`
@@ -96,6 +97,7 @@ This TODO defines how real-world style indicators should affect product prices, 
   - `liquidity_weight`
   - `sentiment_weight`
   - Product-specific overrides should live in `finance.json`.
+  - Current implementation: generic weights live in `market.signal_weights`; product-specific overrides remain a future finance-config extension.
 
 ## Real Financial Institution Model
 
@@ -835,7 +837,8 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 3: Extend `CompanyFinancialReport` to carry realistic accounting metrics.
   - Added `CompanyOperatingStatement`, `CompanyBalanceSheet`, `CompanyFinancialMetrics`, and `CompanyAccountingSnapshot`.
   - Saved reports now persist nested accounting statements and derive compatible values for older saves.
-- [ ] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
+- [x] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
+  - Added a signal-aware update overload, configurable signal group weights, and focused engine tests.
 - [ ] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
 - [ ] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.
 - [ ] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.

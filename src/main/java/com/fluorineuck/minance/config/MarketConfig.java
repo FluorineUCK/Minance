@@ -1,5 +1,6 @@
 package com.fluorineuck.minance.config;
 
+import com.fluorineuck.minance.market.financial.PriceSignalSource;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -12,7 +13,8 @@ public record MarketConfig(
         SpotPricing spot,
         Stabilizer stabilizer,
         FinancialMicrostructure financialMicrostructure,
-        IndexConfig index
+        IndexConfig index,
+        SignalWeights signalWeights
 ) {
     public static final Codec<MarketConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("settlement_interval_ticks").forGetter(MarketConfig::settlementIntervalTicks),
@@ -21,7 +23,8 @@ public record MarketConfig(
             SpotPricing.CODEC.fieldOf("spot").forGetter(MarketConfig::spot),
             Stabilizer.CODEC.fieldOf("stabilizer").forGetter(MarketConfig::stabilizer),
             FinancialMicrostructure.CODEC.fieldOf("financial_microstructure").forGetter(MarketConfig::financialMicrostructure),
-            IndexConfig.CODEC.fieldOf("index").forGetter(MarketConfig::index)
+            IndexConfig.CODEC.fieldOf("index").forGetter(MarketConfig::index),
+            SignalWeights.CODEC.optionalFieldOf("signal_weights", SignalWeights.defaults()).forGetter(MarketConfig::signalWeights)
     ).apply(instance, MarketConfig::new));
 
     public static MarketConfig defaults() {
@@ -39,7 +42,8 @@ public record MarketConfig(
                         new RadiusRules(2, 5, 8),
                         new LevelRules(0.12D, 0.08D, 0.001D, 1.0D, 3.0D, 0.01D)
                 ),
-                new IndexConfig(defaultIndices(), 0.75D, 0.25D, 0.10D, 0.06D, 1.0D)
+                new IndexConfig(defaultIndices(), 0.75D, 0.25D, 0.10D, 0.06D, 1.0D),
+                SignalWeights.defaults()
         );
     }
 
@@ -250,5 +254,39 @@ public record MarketConfig(
                 Codec.STRING.fieldOf("name").forGetter(IndexDefinition::name),
                 Codec.STRING.listOf().fieldOf("matchers").forGetter(IndexDefinition::matchers)
         ).apply(instance, IndexDefinition::new));
+    }
+
+    public record SignalWeights(
+            double fundamentalWeight,
+            double earningsWeight,
+            double flowWeight,
+            double riskWeight,
+            double liquidityWeight,
+            double sentimentWeight
+    ) {
+        public static final Codec<SignalWeights> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.DOUBLE.fieldOf("fundamental_weight").forGetter(SignalWeights::fundamentalWeight),
+                Codec.DOUBLE.fieldOf("earnings_weight").forGetter(SignalWeights::earningsWeight),
+                Codec.DOUBLE.fieldOf("flow_weight").forGetter(SignalWeights::flowWeight),
+                Codec.DOUBLE.fieldOf("risk_weight").forGetter(SignalWeights::riskWeight),
+                Codec.DOUBLE.fieldOf("liquidity_weight").forGetter(SignalWeights::liquidityWeight),
+                Codec.DOUBLE.fieldOf("sentiment_weight").forGetter(SignalWeights::sentimentWeight)
+        ).apply(instance, SignalWeights::new));
+
+        public static SignalWeights defaults() {
+            return new SignalWeights(1.0D, 1.0D, 1.0D, 1.0D, 1.0D, 1.0D);
+        }
+
+        public double weight(PriceSignalSource source) {
+            return switch (source == null ? PriceSignalSource.UNKNOWN : source) {
+                case FUNDAMENTAL -> fundamentalWeight;
+                case EARNINGS -> earningsWeight;
+                case ORDER_FLOW, PRODUCT_ADAPTER, COMMODITY_SPOT, INDEX -> flowWeight;
+                case RISK -> riskWeight;
+                case LIQUIDITY, INSTITUTION -> liquidityWeight;
+                case SENTIMENT -> sentimentWeight;
+                case UNKNOWN -> 1.0D;
+            };
+        }
     }
 }
