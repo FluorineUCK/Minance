@@ -18,12 +18,63 @@ public record CompanyFinancialReport(
         double averageDerivativeDemand,
         double reportChangeRatio,
         double performanceChangeRatio,
+        CompanyOperatingStatement operatingStatement,
+        CompanyBalanceSheet balanceSheet,
+        CompanyFinancialMetrics metrics,
         boolean significantChange
 ) {
+    public CompanyFinancialReport(
+            String companyId,
+            long startTick,
+            long endTick,
+            long openingFunds,
+            long periodIncome,
+            long closingFunds,
+            int totalShares,
+            long navPerShare,
+            double averageProxyLiquidityDemand,
+            double averageDerivativeDemand,
+            double reportChangeRatio,
+            double performanceChangeRatio,
+            boolean significantChange
+    ) {
+        this(
+                companyId,
+                startTick,
+                endTick,
+                openingFunds,
+                periodIncome,
+                closingFunds,
+                totalShares,
+                navPerShare,
+                averageProxyLiquidityDemand,
+                averageDerivativeDemand,
+                reportChangeRatio,
+                performanceChangeRatio,
+                CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null).operatingStatement(),
+                CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null).balanceSheet(),
+                CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null).metrics(),
+                significantChange
+        );
+    }
+
+    public CompanyFinancialReport {
+        operatingStatement = operatingStatement == null
+                ? CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null).operatingStatement()
+                : operatingStatement;
+        balanceSheet = balanceSheet == null
+                ? CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null).balanceSheet()
+                : balanceSheet;
+        metrics = metrics == null
+                ? CompanyFinancialMetrics.fromStatements(operatingStatement, balanceSheet, null)
+                : metrics;
+    }
+
     public static CompanyFinancialReport initial(String companyId, long tick, long funds, int totalShares) {
         long shares = Math.max(1, totalShares);
         long nav = Math.max(1L, Math.round(Math.max(0L, funds) / (double) shares));
-        return new CompanyFinancialReport(companyId, tick, tick, Math.max(0L, funds), 0L, Math.max(0L, funds), Math.max(1, totalShares), nav, 0.0D, 0.0D, 0.0D, 0.0D, false);
+        CompanyAccountingSnapshot snapshot = CompanyAccountingSnapshot.fromReportInputs(Math.max(0L, funds), 0L, Math.max(0L, funds), Math.max(1, totalShares), null);
+        return new CompanyFinancialReport(companyId, tick, tick, Math.max(0L, funds), 0L, Math.max(0L, funds), Math.max(1, totalShares), nav, 0.0D, 0.0D, 0.0D, 0.0D, snapshot.operatingStatement(), snapshot.balanceSheet(), snapshot.metrics(), false);
     }
 
     public static CompanyFinancialReport publish(
@@ -46,6 +97,7 @@ public record CompanyFinancialReport(
         double changeRatio = previous == null ? 0.0D : reportChangeRatio(nav, periodIncome, proxyDemand + derivativeDemand, previous, config);
         double performanceChange = previous == null ? 0.0D : performanceChangeRatio(nav, periodIncome, previous, config);
         boolean significant = previous != null && changeRatio >= Math.max(0.0D, config.report().significantChangeThreshold());
+        CompanyAccountingSnapshot snapshot = CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, shares, previous);
         return new CompanyFinancialReport(
                 companyId,
                 startTick,
@@ -59,6 +111,9 @@ public record CompanyFinancialReport(
                 derivativeDemand,
                 changeRatio,
                 performanceChange,
+                snapshot.operatingStatement(),
+                snapshot.balanceSheet(),
+                snapshot.metrics(),
                 significant
         );
     }
@@ -94,6 +149,9 @@ public record CompanyFinancialReport(
         tag.putDouble("average_derivative_demand", averageDerivativeDemand);
         tag.putDouble("report_change_ratio", reportChangeRatio);
         tag.putDouble("performance_change_ratio", performanceChangeRatio);
+        tag.put("operating_statement", operatingStatement.save());
+        tag.put("balance_sheet", balanceSheet.save());
+        tag.put("financial_metrics", metrics.save());
         tag.putBoolean("significant_change", significantChange);
         return tag;
     }
@@ -104,12 +162,24 @@ public record CompanyFinancialReport(
         long nav = tag.contains("nav_per_share", Tag.TAG_LONG)
                 ? Math.max(1L, tag.getLong("nav_per_share"))
                 : Math.max(1L, Math.round(closingFunds / (double) totalShares));
+        long openingFunds = Math.max(0L, tag.getLong("opening_funds"));
+        long periodIncome = Math.max(0L, tag.getLong("period_income"));
+        CompanyAccountingSnapshot fallback = CompanyAccountingSnapshot.fromReportInputs(openingFunds, periodIncome, closingFunds, totalShares, null);
+        CompanyOperatingStatement operating = tag.contains("operating_statement", Tag.TAG_COMPOUND)
+                ? CompanyOperatingStatement.load(tag.getCompound("operating_statement"))
+                : fallback.operatingStatement();
+        CompanyBalanceSheet balance = tag.contains("balance_sheet", Tag.TAG_COMPOUND)
+                ? CompanyBalanceSheet.load(tag.getCompound("balance_sheet"))
+                : fallback.balanceSheet();
+        CompanyFinancialMetrics metrics = tag.contains("financial_metrics", Tag.TAG_COMPOUND)
+                ? CompanyFinancialMetrics.load(tag.getCompound("financial_metrics"))
+                : CompanyFinancialMetrics.fromStatements(operating, balance, null);
         return new CompanyFinancialReport(
                 tag.getString("company_id"),
                 tag.getLong("start_tick"),
                 tag.getLong("end_tick"),
-                Math.max(0L, tag.getLong("opening_funds")),
-                Math.max(0L, tag.getLong("period_income")),
+                openingFunds,
+                periodIncome,
                 Math.max(0L, closingFunds),
                 totalShares,
                 nav,
@@ -117,6 +187,9 @@ public record CompanyFinancialReport(
                 Math.max(0.0D, tag.getDouble("average_derivative_demand")),
                 Math.max(0.0D, tag.getDouble("report_change_ratio")),
                 clamp(tag.getDouble("performance_change_ratio"), ConfigRegistry.INSTANCE.company().report().minPerformanceChangeRatio(), ConfigRegistry.INSTANCE.company().report().maxPerformanceChangeRatio()),
+                operating,
+                balance,
+                metrics,
                 tag.getBoolean("significant_change")
         );
     }

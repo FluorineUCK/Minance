@@ -10,6 +10,7 @@ Village company identity, candidates, capitalization, shareholder records, compa
 | --- | --- | --- | --- |
 | Company scan and registration orchestration | `VillageCompanyService.INSTANCE.scanLoadedVillages(...)` | `entity/villager` tick orchestration and server lifecycle code | Updates candidates, companies, reports, equity sync, derivatives, and saved-data dirty state |
 | Read sorted companies/candidates | `VillageCompanyService.INSTANCE.sortedCompanies()` / `sortedCandidates()` | UI, commands, product adapters | Read-only list views |
+| Read company reports | `VillageCompany.latestFinancialReport()` / `financialReports()` | Product adapters, UI, commands | Read-only report and accounting snapshot access |
 | Restore company state | `VillageCompanyService.INSTANCE.replaceState(...)` | `data/MinanceSavedData` | Replaces loaded company and candidate state |
 
 ## Lifecycle
@@ -22,11 +23,13 @@ Loaded village scans, company config, profession rules, saved NBT state, and cur
 
 ## Outputs
 
-Village candidates, registered companies, shareholder records, company reports, equity assets, and derivative update triggers.
+Village candidates, registered companies, shareholder records, company reports, operating statements, balance sheets, financial metrics, equity assets, and derivative update triggers.
 
 ## Ownership Rules
 
 External callers should use `VillageCompanyService` as the package entry point. `CompanyService`, `VillageCompany`, `VillageCandidate`, `CompanyFinancialReport`, and `MarketPriceBar` are domain internals unless a specific read method is documented here.
+
+`CompanyFinancialReport` owns raw company accounting facts only. Product packages may read reports and convert them into product-specific signals, but market packages must consume only generic product output.
 
 ## Forbidden Bypass Calls
 

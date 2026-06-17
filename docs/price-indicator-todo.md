@@ -253,7 +253,7 @@ Index logic should separate index calculation from investable products that trac
 
 Company-specific raw fields stay in `entity/company/`; only converted equity signals move into `product/equity/`.
 
-- [ ] Extend company reports with operating statement fields in `entity/company/`.
+- [x] Extend company reports with operating statement fields in `entity/company/`.
   - Revenue or production income.
   - Operating cost.
   - Gross margin.
@@ -261,8 +261,9 @@ Company-specific raw fields stay in `entity/company/`; only converted equity sig
   - Net income.
   - Cash flow.
   - Retained earnings.
+  - Current implementation: `CompanyOperatingStatement` is persisted inside `CompanyFinancialReport`; current defaults derive from production income until explicit cost modeling exists.
 
-- [ ] Extend company reports with balance sheet fields in `entity/company/`.
+- [x] Extend company reports with balance sheet fields in `entity/company/`.
   - Cash.
   - Inventory value.
   - Productive asset value.
@@ -270,8 +271,9 @@ Company-specific raw fields stay in `entity/company/`; only converted equity sig
   - Liabilities.
   - Net asset value.
   - Book value per share.
+  - Current implementation: `CompanyBalanceSheet` is persisted inside `CompanyFinancialReport`; cash and NAV are populated from existing company funds, while inventory/productive/financial assets and liabilities stay zero until those accounting sources exist.
 
-- [ ] Add leverage and solvency metrics in `entity/company/`.
+- [x] Add leverage and solvency metrics in `entity/company/`.
   - Debt-to-assets.
   - Debt-to-equity.
   - Interest coverage.
@@ -279,13 +281,15 @@ Company-specific raw fields stay in `entity/company/`; only converted equity sig
   - Default pressure.
   - These fields should not live in `market/financial`.
   - These fields are raw assessment inputs; they are not the final credit rating or credit line.
+  - Current implementation: `CompanyFinancialMetrics` derives these ratios from the report balance sheet; credit ratings and limits remain Phase 18 work.
 
-- [ ] Add profitability metrics in `entity/company/`.
+- [x] Add profitability metrics in `entity/company/`.
   - ROA.
   - ROE.
   - Profit margin.
   - Earnings growth.
   - Cash-flow growth.
+  - Current implementation: `CompanyFinancialMetrics` persists profitability and growth metrics derived from current and previous reports.
 
 - [x] Add an equity signal adapter in `product/equity/`.
   - Convert company NAV into a fundamental anchor.
@@ -828,7 +832,9 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 2: Add equity/company adapter under `product/equity/` while keeping raw company fields in `entity/company/`.
   - Added a focused `EquitySignalAdapter` behind `EquityMarketService.INSTANCE.priceSignals(...)`.
   - Raw company reports remain in `entity/company`; the market-facing output is a generic `PriceSignalBundle`.
-- [ ] Phase 3: Extend `CompanyFinancialReport` to carry realistic accounting metrics.
+- [x] Phase 3: Extend `CompanyFinancialReport` to carry realistic accounting metrics.
+  - Added `CompanyOperatingStatement`, `CompanyBalanceSheet`, `CompanyFinancialMetrics`, and `CompanyAccountingSnapshot`.
+  - Saved reports now persist nested accounting statements and derive compatible values for older saves.
 - [ ] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
 - [ ] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
 - [ ] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.

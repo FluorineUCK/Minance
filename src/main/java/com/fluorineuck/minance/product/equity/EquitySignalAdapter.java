@@ -28,8 +28,8 @@ final class EquitySignalAdapter {
         );
 
         List<PriceSignal> signals = new ArrayList<>();
-        if (report != null && report.significantChange() && report.performanceChangeRatio() != 0.0D) {
-            double performance = report.performanceChangeRatio();
+        if (report != null && report.significantChange() && reportPerformance(report) != 0.0D) {
+            double performance = reportPerformance(report);
             signals.add(new PriceSignal(
                     productId,
                     FinancialProductType.EQUITY,
@@ -45,5 +45,10 @@ final class EquitySignalAdapter {
         }
 
         return new PriceSignalBundle(productId, FinancialProductType.EQUITY, signals, List.of(anchor));
+    }
+
+    private static double reportPerformance(CompanyFinancialReport report) {
+        double earningsGrowth = report.metrics().earningsGrowth();
+        return earningsGrowth == 0.0D ? report.performanceChangeRatio() : earningsGrowth;
     }
 }
