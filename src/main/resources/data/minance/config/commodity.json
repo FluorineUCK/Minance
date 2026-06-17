@@ -1,0 +1,6 @@
+{
+  "initial_target_inventory": 64.0,
+  "default_target_inventory": 256.0,
+  "default_volatility": 0.05,
+  "reference_observed_weight": 0.02
+}

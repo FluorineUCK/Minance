@@ -1,0 +1,11 @@
+{
+  "max_leverage": 3.0,
+  "margin_call_ratio": 0.35,
+  "liquidation_ratio": 0.25,
+  "liabilities_ratio_threshold": 0.7,
+  "liabilities_penalty_weight": 0.3,
+  "base_default_probability": 0.01,
+  "credit_score_income_weight": 0.45,
+  "credit_score_liquidity_weight": 0.35,
+  "credit_score_leverage_weight": 0.2
+}

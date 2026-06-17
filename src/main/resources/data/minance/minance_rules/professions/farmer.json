@@ -1,0 +1,18 @@
+{
+  "id": "minance:farmer",
+  "profession": "minecraft:farmer",
+  "expected_shares": 18,
+  "product_items": ["minecraft:wheat", "minecraft:bread", "minecraft:carrot"],
+  "preferred_futures_markets": ["minance:crops_0dte", "minance:food_0dte"],
+  "demand_items": ["minecraft:iron_hoe", "minecraft:bread"],
+  "risk_preference": 0.28,
+  "min_trade_interval_ticks": 500,
+  "max_trade_interval_ticks": 1800,
+  "target_profit": 90,
+  "production_income": 45,
+  "derivative_proxy_level": 4,
+  "derivative_demand_weight": 1.0,
+  "allow_non_zero_futures": true,
+  "max_futures_duration_ticks": 2400,
+  "spot_demand_budget_ratio": 0.18
+}

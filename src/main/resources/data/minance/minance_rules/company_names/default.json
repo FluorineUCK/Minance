@@ -1,0 +1,53 @@
+﻿{
+  "id": "minance:default",
+  "prefixes": [
+    "Green",
+    "Iron",
+    "Oak",
+    "River",
+    "Stone",
+    "Bright",
+    "Copper",
+    "Silver",
+    "Amber",
+    "Cedar",
+    "Maple",
+    "Willow",
+    "Crystal",
+    "Sage",
+    "Golden",
+    "Pine"
+  ],
+  "middle_words": [
+    "Harvest",
+    "Forge",
+    "Market",
+    "Bell",
+    "Craft",
+    "Trade",
+    "Village",
+    "Ledger",
+    "Field",
+    "Mill",
+    "Beacon",
+    "Haven",
+    "Harbor",
+    "Bridge",
+    "Summit",
+    "Crest"
+  ],
+  "suffixes": [
+    "Company",
+    "Holdings",
+    "Exchange",
+    "Works",
+    "Guild",
+    "Trust",
+    "Partners",
+    "Industries",
+    "Enterprises",
+    "Group",
+    "Associates",
+    "Collective"
+  ]
+}

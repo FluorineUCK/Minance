@@ -1,0 +1,10 @@
+.gradle/
+build/
+run/
+logs/
+.publish/
+publish-worktree/
+*.log
+*.tmp
+*.class
+out/

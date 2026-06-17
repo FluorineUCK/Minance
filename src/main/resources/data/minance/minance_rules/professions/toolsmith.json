@@ -1,0 +1,18 @@
+{
+  "id": "minance:toolsmith",
+  "profession": "minecraft:toolsmith",
+  "expected_shares": 26,
+  "product_items": ["minecraft:iron_pickaxe", "minecraft:iron_axe", "minecraft:iron_shovel"],
+  "preferred_futures_markets": ["minance:tools_0dte", "minance:minerals_0dte"],
+  "demand_items": ["minecraft:iron_ingot", "minecraft:coal", "minecraft:bread"],
+  "risk_preference": 0.52,
+  "min_trade_interval_ticks": 700,
+  "max_trade_interval_ticks": 2200,
+  "target_profit": 160,
+  "production_income": 80,
+  "derivative_proxy_level": 4,
+  "derivative_demand_weight": 1.0,
+  "allow_non_zero_futures": true,
+  "max_futures_duration_ticks": 3600,
+  "spot_demand_budget_ratio": 0.25
+}

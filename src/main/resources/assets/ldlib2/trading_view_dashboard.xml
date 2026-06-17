@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui xmlns="https://lowdragmc.com/ldlib2/ui">
+    <stylesheet location="ldlib2:lss/mc.lss"/>
+    <style>
+        .minance-root {
+            width: 1000px;
+            height: 600px;
+        }
+        .trading-layout {
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+        .left-panel {
+            width: 220px;
+            padding: 6px;
+        }
+        .center-panel {
+            flex: 1 1 auto;
+            padding: 6px;
+        }
+        .right-panel {
+            width: 260px;
+            padding: 6px;
+        }
+        .bottom-panel {
+            height: 120px;
+            width: 100%;
+        }
+    </style>
+
+    <root id="minance-trading-root" class="minance-root">
+        <!-- Horizontal split: left | center | right (resizable handles) -->
+        <split-view orientation="horizontal" id="minance-split-horizontal" class="trading-layout">
+            <pane min-size="140" size="220">
+                <element id="minance-left-list" class="left-panel"/>
+            </pane>
+            <resizer/>
+            <pane min-size="360" size="*">
+                <!-- Center chart reuses existing spot panel element -->
+                <element id="minance-spot-panel" class="center-panel"/>
+            </pane>
+            <resizer/>
+            <pane min-size="200" size="260">
+                <element id="minance-right-details" class="right-panel">
+                    <!-- quick open detail button -->
+                    <button id="open-detail-btn" text="Open details"/>
+                </element>
+            </pane>
+        </split-view>
+
+        <!-- Vertical split for bottom strip (resizable) -->
+        <split-view orientation="vertical" id="minance-split-vertical" style="height:120px; margin-top:6px;">
+            <pane size="*">
+                <element id="minance-bottom-strip" class="bottom-panel"/>
+            </pane>
+            <resizer/>
+            <pane size="120">
+                <!-- placeholder for additional docked UI -->
+                <element id="minance-bottom-extra"/>
+            </pane>
+        </split-view>
+
+        <!-- Hidden dialog for details; position absolute overlay -->
+        <element id="minance-detail-dialog" style="position:absolute; left:20%; top:12%; width:60%; height:70%; display:none; z-index:999;" class="detail-dialog">
+            <style>
+                .detail-dialog { background: rgba(4,6,8,0.95); padding:12px; border-radius:6px; }
+            </style>
+            <label text="Details"/>
+            <element id="detail-content"/>
+            <button id="close-detail-btn" text="Close"/>
+        </element>
+
+        <!-- Tabs for overlays/indicators (editor-side) -->
+        <tab-view id="trading-tabs">
+            <tab title="Indicators">
+                <selector id="indicator-selector"/>
+            </tab>
+            <tab title="Orders">
+                <element id="orders-panel"/>
+            </tab>
+        </tab-view>
+    </root>
+</ui>

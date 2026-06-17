@@ -1,0 +1,18 @@
+{
+  "id": "minance:armorer",
+  "profession": "minecraft:armorer",
+  "expected_shares": 30,
+  "product_items": ["minecraft:iron_chestplate", "minecraft:shield"],
+  "preferred_futures_markets": ["minance:minerals_0dte", "minance:tools_0dte"],
+  "demand_items": ["minecraft:iron_ingot", "minecraft:coal"],
+  "risk_preference": 0.48,
+  "min_trade_interval_ticks": 800,
+  "max_trade_interval_ticks": 2400,
+  "target_profit": 180,
+  "production_income": 90,
+  "derivative_proxy_level": 4,
+  "derivative_demand_weight": 1.0,
+  "allow_non_zero_futures": true,
+  "max_futures_duration_ticks": 3600,
+  "spot_demand_budget_ratio": 0.25
+}
