@@ -120,7 +120,7 @@ The simulation should model only the few institution roles needed for price form
   - Current implementation: `FinancialInstitutionRole` and `FinancialInstitutionProfile` model these role grants.
 
 - [ ] Place institution state in the right domain.
-  - Default public institution identity and role grants: future `entity/institution/`.
+  - Default public institution identity and role grants: `entity/institution/`.
   - Player-created institution identity, licenses, service grants, ownership, and operator permissions: future `entity/institution/` plus `entity/player/`.
   - Issuer fields for companies: `entity/company/`.
   - Issuer adapters for products: the corresponding `product/*/` package.
@@ -129,8 +129,9 @@ The simulation should model only the few institution roles needed for price form
   - Liquidity provider state: `market/financial/`.
   - ETF creation/redemption rules: `product/component/fund/` or `product/index/` if created, with liquidity effects emitted into `market/financial/`.
   - Clearing, custody, margin, and default state: `market/financial/` plus `product/liabilities/`.
+  - Current implementation: default public provider identity, role grants, access-point metadata, and provider context live under `entity/institution/`.
 
-- [ ] Define the current market UI as a default institution service terminal.
+- [x] Define the current market UI as a default institution service terminal.
   - The current `MarketPanelElement` / LDLib dashboard should be treated as a terminal for the default `central_bank_and_securities` provider.
   - The UI may display market-wide data, listed products, derivatives, funds, structured products, credit assessments, deposits, and debug attribution through that provider context.
   - The UI must not be the authority that creates prices, grants credit, lists products, clears trades, or settles derivatives.
@@ -138,6 +139,7 @@ The simulation should model only the few institution roles needed for price form
   - Current keyboard/command access may default to `central_bank_and_securities` for development and public-market access.
   - Future block/menu terminals can bind to default or player-owned providers without duplicating pricing logic.
   - UI labels should eventually show the active provider, such as default public market, player broker, player exchange, or player fund manager.
+  - Current implementation: `MarketLdLibDashboard.open(FinancialServiceProviderContext)` accepts explicit provider context, keyboard access defaults to `central_bank_and_securities`, and commands expose `/market provider`.
 
 - [ ] Preserve player-buildable financial infrastructure.
   - Players should be able to create or operate their own financial institutions when the gameplay layer is added.
@@ -844,8 +846,10 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
   - Added `entity/institution` role/profile/request models and `FinancialInstitutionSignalService`.
   - Institution signals are emitted as generic `PriceSignalBundle` values for market consumption; signal confidence and strength caps are configured through `finance.institution_signal`.
-  - Default provider identity remains Phase 6 work.
-- [ ] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.
+  - Default provider identity is handled by Phase 6.
+- [x] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.
+  - Added `FinancialInstitutionDirectory`, `FinancialServiceProviderContext`, and `FinancialServiceAccessPoint`.
+  - UI and command access now resolve explicit provider contexts while preserving current default-provider behavior.
 - [ ] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.
 - [ ] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
 - [ ] Phase 9: Add index-tracking fund/ETF mechanics, including NAV, tracking error, and creation/redemption.
@@ -888,7 +892,7 @@ These items stay product-agnostic under `market/financial/`.
 - [ ] Index-tracking products report NAV, market price, tracking error, and premium/discount.
 - [ ] ETF-like creation/redemption flows affect both the fund product and the underlying basket.
 - [ ] Institution role behavior is represented through explicit deterministic services or adapters, not hidden inside price formulas.
-- [ ] Current market UI is documented and implemented as a terminal for the default `central_bank_and_securities` provider, not as the owner of market behavior.
+- [x] Current market UI is documented and implemented as a terminal for the default `central_bank_and_securities` provider, not as the owner of market behavior.
 - [ ] Domain calls that depend on service provider behavior can accept explicit provider context.
 - [ ] Player-owned financial institutions can be represented without duplicating default-provider logic or requiring `/market` debug access.
 - [ ] Missing player-provider capabilities fail explicitly instead of silently routing to the default provider.

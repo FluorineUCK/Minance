@@ -5,6 +5,9 @@ import com.fluorineuck.minance.entity.company.CompanyFinancialReport;
 import com.fluorineuck.minance.entity.company.VillageCandidate;
 import com.fluorineuck.minance.entity.company.VillageCompany;
 import com.fluorineuck.minance.entity.company.VillageCompanyService;
+import com.fluorineuck.minance.entity.institution.FinancialInstitutionDirectory;
+import com.fluorineuck.minance.entity.institution.FinancialServiceAccessPoint;
+import com.fluorineuck.minance.entity.institution.FinancialServiceProviderContext;
 import com.fluorineuck.minance.market.index.MarketIndexService;
 import com.fluorineuck.minance.market.financial.FinancialMarketEngine;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketAsset;
@@ -71,6 +74,7 @@ public final class MinanceCommands {
                                                         .executes(context -> addCompanyFunds(context.getSource(), StringArgumentType.getString(context, "company_id"), -LongArgumentType.getLong(context, "amount"))))))))
                 .then(Commands.literal("structured").executes(context -> listStructured(context.getSource())))
                 .then(Commands.literal("debug").executes(context -> debugMarket(context.getSource())))
+                .then(Commands.literal("provider").executes(context -> showProvider(context.getSource())))
                 .then(Commands.literal("ui").executes(context -> describeUi(context.getSource()))));
     }
 
@@ -247,6 +251,8 @@ public final class MinanceCommands {
     }
     private static int debugMarket(CommandSourceStack source) {
         MinanceSavedData.get(source.getServer());
+        FinancialServiceProviderContext providerContext = commandProviderContext();
+        source.sendSuccess(() -> Component.literal("[Minance Debug] provider=" + providerContext.displayName() + " [" + providerContext.providerId() + "] access=" + providerContext.accessPoint()), false);
         source.sendSuccess(() -> Component.literal("[Minance Debug] spot=" + SpotMarketService.INSTANCE.assets().size() + " financial=" + FinancialMarketEngine.INSTANCE.markets().size()), false);
         SpotMarketService.INSTANCE.assets().values().stream().limit(10).forEach(asset -> source.sendSuccess(() -> Component.literal(
                 "[Spot] " + asset.item() + " current=" + asset.price() + " next=" + Math.round(asset.nextPrice()) + " ref=" + Math.round(asset.referencePrice()) + " inv=" + asset.inventory() + "/" + Math.round(asset.targetInventory()) + " inflow=" + asset.inflow() + " outflow=" + asset.outflow() + " stab=" + asset.stabilizerBuyVolume() + "/" + asset.stabilizerSellVolume() + " orders=" + asset.buyOrderCount() + "/" + asset.sellOrderCount()
@@ -256,9 +262,24 @@ public final class MinanceCommands {
         ), false));
         return SpotMarketService.INSTANCE.assets().size() + FinancialMarketEngine.INSTANCE.markets().size();
     }
+
+    private static int showProvider(CommandSourceStack source) {
+        FinancialServiceProviderContext providerContext = commandProviderContext();
+        source.sendSuccess(() -> Component.literal("[Minance Provider] " + providerContext.displayName() + " [" + providerContext.providerId() + "]"), false);
+        source.sendSuccess(() -> Component.literal("access=" + providerContext.accessPoint() + " player_owned=" + providerContext.playerOwned()), false);
+        source.sendSuccess(() -> Component.literal("roles=" + providerContext.provider().roles()), false);
+        return providerContext.provider().roles().size();
+    }
+
     private static int describeUi(CommandSourceStack source) {
+        FinancialServiceProviderContext providerContext = commandProviderContext();
         source.sendSuccess(() -> Component.literal("Press M to open the Minance market dashboard. You can rebind it under Controls > Key Binds > Minance."), false);
+        source.sendSuccess(() -> Component.literal("Default provider: " + providerContext.displayName() + " [" + providerContext.providerId() + "]"), false);
         return 1;
+    }
+
+    private static FinancialServiceProviderContext commandProviderContext() {
+        return FinancialInstitutionDirectory.INSTANCE.defaultProviderContext(FinancialServiceAccessPoint.COMMAND);
     }
 }
 

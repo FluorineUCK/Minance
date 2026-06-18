@@ -92,7 +92,7 @@ required_capital = minimum_capital_per_share * sum(expected_shares from villager
 
 默认按 `M` 打开 Minance 市场面板，可在 Controls > Key Binds > Minance 中重新绑定。
 
-当前客户端面板应理解为默认公共金融机构 `central_bank_and_securities` 的服务终端。它代表一个合并的中央银行与证券服务主体，提供公共市场查看、证券/衍生品/基金/结构化产品入口、指数查看、订单流和调试信息。面板本身不是市场权威逻辑，不负责定价、授信、清算、结算或产品状态持久化。
+当前客户端面板应理解为默认公共金融机构 `central_bank_and_securities` 的服务终端。它代表一个合并的中央银行与证券服务主体，提供公共市场查看、证券/衍生品/基金/结构化产品入口、指数查看、订单流和调试信息。面板本身不是市场权威逻辑，不负责定价、授信、清算、结算或产品状态持久化。当前快捷键入口会绑定到 `FinancialServiceProviderContext` 中的默认公共服务主体，未来方块或菜单入口可以传入玩家自建机构上下文。
 
 客户端 UI 使用 LDLib2：
 
@@ -130,6 +130,7 @@ required_capital = minimum_capital_per_share * sum(expected_shares from villager
 
 /market structured
 /market debug
+/market provider
 /market ui
 ```
 
@@ -156,7 +157,7 @@ src/main/java/com/fluorineuck/minance/
 |-- config/              # Java 侧配置类型、默认值和配置注册
 |-- data/                # 数据包/配置加载器、重载器和世界存档边界
 |-- entity/company/      # 村庄公司、候选公司、价格条和财务报告
-|-- entity/institution/  # 金融机构身份、角色授权和机构来源信号入口
+|-- entity/institution/  # 金融机构身份、角色授权、服务主体上下文和机构来源信号入口
 |-- entity/player/       # 玩家经济身份和未来玩家行为入口
 |-- entity/village/      # 已加载村庄扫描和候选公司聚合
 |-- entity/villager/     # 村民交易发现和市场行为入口

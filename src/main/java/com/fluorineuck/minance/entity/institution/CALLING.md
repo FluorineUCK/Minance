@@ -8,24 +8,28 @@ Financial institution identity, deterministic role grants, and institution-origi
 
 | Feature | Entry point | Allowed callers | Side effects |
 | --- | --- | --- | --- |
+| Resolve default public provider | `FinancialInstitutionDirectory.INSTANCE.defaultPublicProvider()` | UI, commands, product service orchestration | Read-only default provider identity |
+| Build service-provider context | `FinancialInstitutionDirectory.INSTANCE.defaultProviderContext(...)` / `FinancialServiceProviderContext` | UI, commands, future block/menu terminals and provider-aware services | Immutable context object |
 | Build institution-origin price signals | `FinancialInstitutionSignalService.INSTANCE.priceSignals(...)` | Future provider-aware product services and institution orchestration | Returns immutable `PriceSignalBundle`; no market mutation |
-| Read institution profile roles | `FinancialInstitutionProfile.hasRole(...)` | Product services, commands, UI, future permission checks | Read-only role check |
+| Read institution profile roles | `FinancialInstitutionProfile.hasRole(...)` / `FinancialServiceProviderContext.hasRole(...)` | Product services, commands, UI, future permission checks | Read-only role check |
 
 ## Lifecycle
 
-Institution profiles are deterministic inputs to product and service-provider orchestration. Signal construction runs when a product or provider service has explicit institution flow, liquidity, or risk inputs.
+Institution profiles are deterministic inputs to UI terminals, command adapters, product services, and service-provider orchestration. Signal construction runs when a product or provider service has explicit institution flow, liquidity, or risk inputs.
 
 ## Inputs
 
-Institution profile, role set, product id, product type, explicit flow/risk/liquidity inputs, optional anchor price, horizon ticks, and `finance.institution_signal` config.
+Institution profile, role set, service access point, product id, product type, explicit flow/risk/liquidity inputs, optional anchor price, horizon ticks, and `finance.institution_signal` config.
 
 ## Outputs
 
-Generic `PriceSignalBundle` instances that can be passed to `market/financial` through its signal-aware update API.
+Default provider identity, immutable service-provider contexts, and generic `PriceSignalBundle` instances that can be passed to `market/financial` through its signal-aware update API.
 
 ## Ownership Rules
 
 Institution behavior must be deterministic from explicit state, config, request inputs, and formulas. Player-owned and default institutions must eventually use this same role/profile surface instead of duplicating UI logic.
+
+The default `central_bank_and_securities` profile is the current public service provider for UI and command access. `MarketLdLibDashboard.open()` and `/market` commands use explicit `FinancialServiceProviderContext` values so future block/menu terminals and player-owned providers can route through the same domain surface without copying market logic.
 
 `InstitutionSignalRequest` carries observed or computed institution state. `finance.institution_signal` controls signal confidence and strength caps:
 

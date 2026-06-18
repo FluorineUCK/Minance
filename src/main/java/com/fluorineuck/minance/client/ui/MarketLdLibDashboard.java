@@ -1,6 +1,9 @@
 package com.fluorineuck.minance.client.ui;
 
 import com.fluorineuck.minance.client.ui.elements.MarketPanelElement;
+import com.fluorineuck.minance.entity.institution.FinancialInstitutionDirectory;
+import com.fluorineuck.minance.entity.institution.FinancialServiceAccessPoint;
+import com.fluorineuck.minance.entity.institution.FinancialServiceProviderContext;
 import com.lowdragmc.lowdraglib2.gui.holder.ModularUIScreen;
 import com.lowdragmc.lowdraglib2.gui.ui.ModularUI;
 import com.lowdragmc.lowdraglib2.gui.ui.UI;
@@ -13,18 +16,31 @@ import org.w3c.dom.Document;
 
 public final class MarketLdLibDashboard extends ModularUIScreen {
     private static final ResourceLocation DASHBOARD_XML = ResourceLocation.fromNamespaceAndPath("minance", "market_dashboard.xml");
+    private final FinancialServiceProviderContext providerContext;
     private MarketPanelElement panelElement;
 
-    private MarketLdLibDashboard() {
-        super(createUi(), Component.literal("Minance"));
+    private MarketLdLibDashboard(FinancialServiceProviderContext providerContext) {
+        super(createUi(), title(providerContext));
+        this.providerContext = providerContext;
     }
 
     public static void open() {
+        open(FinancialInstitutionDirectory.INSTANCE.defaultProviderContext(FinancialServiceAccessPoint.MARKET_DASHBOARD));
+    }
+
+    public static void open(FinancialServiceProviderContext providerContext) {
+        FinancialServiceProviderContext context = providerContext == null
+                ? FinancialInstitutionDirectory.INSTANCE.defaultProviderContext(FinancialServiceAccessPoint.MARKET_DASHBOARD)
+                : providerContext;
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen instanceof MarketLdLibDashboard) {
+        if (minecraft.screen instanceof MarketLdLibDashboard dashboard && dashboard.providerContext.equals(context)) {
             return;
         }
-        minecraft.setScreen(new MarketLdLibDashboard());
+        minecraft.setScreen(new MarketLdLibDashboard(context));
+    }
+
+    public FinancialServiceProviderContext providerContext() {
+        return providerContext;
     }
 
     @Override
@@ -60,5 +76,9 @@ public final class MarketLdLibDashboard extends ModularUIScreen {
             // Fall through to custom element fallback.
         }
         return ModularUI.of(UI.of(new MarketPanelElement())).shouldCloseOnEsc(true).shouldCloseOnKeyInventory(true);
+    }
+
+    private static Component title(FinancialServiceProviderContext providerContext) {
+        return Component.literal("Minance - " + providerContext.displayName());
     }
 }
