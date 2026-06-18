@@ -156,7 +156,7 @@ src/main/java/com/fluorineuck/minance/
 |-- config/              # Java 侧配置类型、默认值和配置注册
 |-- data/                # 数据包/配置加载器、重载器和世界存档边界
 |-- entity/company/      # 村庄公司、候选公司、价格条和财务报告
-|-- entity/institution/  # 规划中的默认/玩家金融机构身份和服务授权
+|-- entity/institution/  # 金融机构身份、角色授权和机构来源信号入口
 |-- entity/player/       # 玩家经济身份和未来玩家行为入口
 |-- entity/village/      # 已加载村庄扫描和候选公司聚合
 |-- entity/villager/     # 村民交易发现和市场行为入口

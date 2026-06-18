@@ -12,13 +12,15 @@ public record FinanceConfig(
         Map<String, ProductMarketParameters> products,
         DerivativePricing derivative,
         FundRules fund,
-        EquitySignalRules equitySignal
+        EquitySignalRules equitySignal,
+        InstitutionSignalRules institutionSignal
 ) {
     public static final Codec<FinanceConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.unboundedMap(Codec.STRING, ProductMarketParameters.CODEC).fieldOf("products").forGetter(FinanceConfig::products),
             DerivativePricing.CODEC.fieldOf("derivative").forGetter(FinanceConfig::derivative),
             FundRules.CODEC.fieldOf("fund").forGetter(FinanceConfig::fund),
-            EquitySignalRules.CODEC.optionalFieldOf("equity_signal", EquitySignalRules.defaults()).forGetter(FinanceConfig::equitySignal)
+            EquitySignalRules.CODEC.optionalFieldOf("equity_signal", EquitySignalRules.defaults()).forGetter(FinanceConfig::equitySignal),
+            InstitutionSignalRules.CODEC.optionalFieldOf("institution_signal", InstitutionSignalRules.defaults()).forGetter(FinanceConfig::institutionSignal)
     ).apply(instance, FinanceConfig::new));
 
     public static FinanceConfig defaults() {
@@ -33,7 +35,8 @@ public record FinanceConfig(
                 Map.copyOf(products),
                 new DerivativePricing(1, 100, 24_000L, 0.0005D, 0.05D, 0.001D, 100),
                 new FundRules(8),
-                EquitySignalRules.defaults()
+                EquitySignalRules.defaults(),
+                InstitutionSignalRules.defaults()
         );
     }
 
@@ -110,6 +113,28 @@ public record FinanceConfig(
 
         public static EquitySignalRules defaults() {
             return new EquitySignalRules(2_400L, 0.85D, 1.0D, 0.75D, 1.0D);
+        }
+    }
+
+    public record InstitutionSignalRules(
+            double liquiditySignalConfidence,
+            double clientFlowSignalConfidence,
+            double riskSignalConfidence,
+            double anchorConfidence,
+            double maxClientFlowStrength,
+            double maxRiskDiscountStrength
+    ) {
+        public static final Codec<InstitutionSignalRules> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Codec.DOUBLE.fieldOf("liquidity_signal_confidence").forGetter(InstitutionSignalRules::liquiditySignalConfidence),
+                Codec.DOUBLE.fieldOf("client_flow_signal_confidence").forGetter(InstitutionSignalRules::clientFlowSignalConfidence),
+                Codec.DOUBLE.fieldOf("risk_signal_confidence").forGetter(InstitutionSignalRules::riskSignalConfidence),
+                Codec.DOUBLE.fieldOf("anchor_confidence").forGetter(InstitutionSignalRules::anchorConfidence),
+                Codec.DOUBLE.fieldOf("max_client_flow_strength").forGetter(InstitutionSignalRules::maxClientFlowStrength),
+                Codec.DOUBLE.fieldOf("max_risk_discount_strength").forGetter(InstitutionSignalRules::maxRiskDiscountStrength)
+        ).apply(instance, InstitutionSignalRules::new));
+
+        public static InstitutionSignalRules defaults() {
+            return new InstitutionSignalRules(1.0D, 0.85D, 0.75D, 0.8D, 1.0D, 1.0D);
         }
     }
 }

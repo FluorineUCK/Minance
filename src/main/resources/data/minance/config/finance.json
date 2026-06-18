@@ -67,5 +67,13 @@
     "performance_signal_multiplier": 1.0,
     "performance_signal_confidence": 0.75,
     "max_signal_strength": 1.0
+  },
+  "institution_signal": {
+    "liquidity_signal_confidence": 1.0,
+    "client_flow_signal_confidence": 0.85,
+    "risk_signal_confidence": 0.75,
+    "anchor_confidence": 0.8,
+    "max_client_flow_strength": 1.0,
+    "max_risk_discount_strength": 1.0
   }
 }

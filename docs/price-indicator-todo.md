@@ -103,19 +103,21 @@ This TODO defines how real-world style indicators should affect product prices, 
 
 The simulation should model only the few institution roles needed for price formation. Do not mirror every real-world institution as a separate subsystem unless it creates distinct game behavior.
 
-- [ ] Enforce a no LLM-Agent architecture rule.
+- [x] Enforce a no LLM-Agent architecture rule.
   - Do not implement financial institutions as LLM agents, prompt-driven actors, natural-language planners, or external model calls.
   - Institution behavior must be deterministic or pseudo-random from explicit state, config, and formulas.
   - Allowed patterns: rule engines, state machines, scoring functions, scheduled services, order-flow generators, and data-driven adapters.
   - Every institution action must be replayable from saved state plus config.
+  - Current implementation: `entity/institution` exposes deterministic role/profile and signal service types only; no external model or prompt-driven actor path exists.
 
-- [ ] Add a simplified role model for institutions.
+- [x] Add a simplified role model for institutions.
   - `central_bank_and_securities`: the current default public service provider represented by the market UI. It combines central-bank-style base rates/liquidity support with securities-market access, brokerage, listing, clearing access, index publication, and derivative/fund/structured-product service entry points.
   - `issuer`: creates securities or claims from an underlying entity, such as company equity, debt, fund shares, or structured products.
   - `asset_manager`: manages funds, index products, holdings, subscriptions/redemptions, rebalancing, fees, and tracking error.
   - `liquidity_provider`: combines market maker, broker/dealer, venue, and ETF authorized participant behavior into one deterministic market-liquidity layer.
   - `credit_underwriter`: combines simplified bank, securities firm, and rating-service behavior. It produces ratings, credit limits, spread quotes, and underwriting decisions for entities, issues, facilities, or tranches.
   - `clearing_and_custody`: combines settlement, margin, custody, collateral, ownership records, and default handling.
+  - Current implementation: `FinancialInstitutionRole` and `FinancialInstitutionProfile` model these role grants.
 
 - [ ] Place institution state in the right domain.
   - Default public institution identity and role grants: future `entity/institution/`.
@@ -839,7 +841,10 @@ These items stay product-agnostic under `market/financial/`.
   - Saved reports now persist nested accounting statements and derive compatible values for older saves.
 - [x] Phase 4: Update `FinancialMarketEngine` to consume generic signals and preserve current behavior through defaults.
   - Added a signal-aware update overload, configurable signal group weights, and focused engine tests.
-- [ ] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
+- [x] Phase 5: Add simplified institution role model and deterministic institution-driven flow/risk signals.
+  - Added `entity/institution` role/profile/request models and `FinancialInstitutionSignalService`.
+  - Institution signals are emitted as generic `PriceSignalBundle` values for market consumption; signal confidence and strength caps are configured through `finance.institution_signal`.
+  - Default provider identity remains Phase 6 work.
 - [ ] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.
 - [ ] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.
 - [ ] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
