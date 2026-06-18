@@ -168,7 +168,7 @@ src/main/java/com/fluorineuck/minance/
 |-- network/             # 包、同步消息和客户端/服务端状态传输
 |-- product/commodity/core/ # 商品身份、属性和物理库存
 |-- product/commodity/spot/ # 商品现货事件、流量、结算和价格历史
-|-- product/component/   # 通用金融产品组件集合：fund、structured、derivative，目标拆出 core 与 collection
+|-- product/component/   # 通用金融产品组件集合：fund、structured、derivative，并包含 core 属性叠加与 collection 读模型
 |-- product/equity/      # 公司股权资产
 |-- product/insurance/   # 保险产品预留目录
 |-- product/liabilities/ # 债务、负债和信用产品

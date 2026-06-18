@@ -15,35 +15,30 @@ Target layout:
 
 | Feature | Entry point | Allowed callers | Side effects |
 | --- | --- | --- | --- |
-| Check generic component membership | `GenericProductComponent.contains(...)` | Product adapters, market adapters, UI, commands | None |
-| Map from financial product type | `GenericProductComponent.fromFinancialProductType(...)` | Product adapters, market adapters, UI, commands | None |
-| List financial product types in the collection | `GenericProductComponent.financialProductTypes()` | Product adapters, market adapters, UI, commands | None |
-
-Planned entry points:
-
-| Feature | Entry point | Allowed callers | Side effects |
-| --- | --- | --- | --- |
-| Resolve composable component attributes | `ComponentOverlayResolver.resolve(...)` | Product adapters, market adapters, UI, commands | None |
+| Check generic component membership | `GenericProductComponent.contains(...)` / `ComponentCollectionIndex.INSTANCE.contains(...)` | Product adapters, market adapters, UI, commands | None |
+| Map from financial product type | `GenericProductComponent.fromFinancialProductType(...)` / `ComponentCollectionIndex.INSTANCE.entry(...)` | Product adapters, market adapters, UI, commands | None |
+| List financial product types in the collection | `GenericProductComponent.financialProductTypes()` / `ComponentCollectionIndex.INSTANCE.entries()` | Product adapters, market adapters, UI, commands | None |
+| Resolve composable component attributes | `ComponentOverlayResolver.INSTANCE.resolve(...)` | Product adapters, market adapters, UI, commands | None |
 | Describe attributes layered onto a product | `ComponentOverlay` / `ComponentAttributeSet` | Product owners and read adapters | None |
 
 ## Lifecycle
 
-Pure classification. It can be called whenever code needs to decide whether a product is one of the generic financial product components.
+Pure classification and overlay metadata. It can be called whenever code needs to decide whether a product is one of the generic financial product components or which reusable component attributes it carries.
 
 ## Inputs
 
-`FinancialProductType`.
+`FinancialProductType` and optional product id.
 
 ## Outputs
 
-`GenericProductComponent`, collection membership, owner package metadata, or an empty result.
+`GenericProductComponent`, `ComponentCollectionEntry`, `ComponentOverlay`, collection membership, owner package metadata, or an empty result.
 
 ## Ownership Rules
 
 `product/component/` owns component metadata and collection membership only.
 
 - Reusable overlay attributes belong in `product/component/core/`.
-- Component membership/indexing belongs in `product/component/collection/` once the collection package is created.
+- Component membership/indexing belongs in `product/component/collection/`.
 - Future implementation should move to `product/component/derivative/future/`.
 - Option implementation should move to `product/component/derivative/option/`.
 - Shared derivative primitives belong in `product/component/derivative/core/` only if both future and option implementations use them.

@@ -17,7 +17,7 @@ Current members:
 
 ## Collection Interface
 
-The code-level collection is `product/component/GenericProductComponent`.
+The code-level collection is `product/component/GenericProductComponent` plus the read-model index in `product/component/collection/ComponentCollectionIndex`.
 
 Use it when a caller needs to answer:
 
@@ -30,7 +30,7 @@ Use it when a caller needs to answer:
 `product/component/` is the root for generic product component concepts.
 
 - `product/component/core/`: shared attribute overlay model for reusable component descriptors.
-- `product/component/collection/`: component membership and indexing read model. It may replace or absorb the current flat `GenericProductComponent` enum once implemented.
+- `product/component/collection/`: component membership and indexing read model over the current flat `GenericProductComponent` enum.
 
 Concrete implementation owners remain separate:
 
@@ -43,7 +43,7 @@ Concrete implementation owners remain separate:
 
 `product/component/core/` should answer: what extra financial attributes are layered onto this product?
 
-Planned core types:
+Implemented core types:
 
 - `ComponentAttribute`
 - `ComponentAttributeSet`
@@ -96,7 +96,7 @@ If a future generic component is added, add it to all of these places in the sam
 - `FinancialProductType`
 - `GenericProductComponent`
 - `product/component/core/` overlay support when the component introduces reusable attributes
-- `product/component/collection/` when the collection read model exists
+- `product/component/collection/`
 - the implementation owner package
 - the owner package `CALLING.md`
 - this document

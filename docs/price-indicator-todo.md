@@ -39,7 +39,7 @@ This TODO defines how real-world style indicators should affect product prices, 
 
 ## Target Architecture
 
-- [ ] Treat funds, structured products, futures, and options as one generic financial product component collection.
+- [x] Treat funds, structured products, futures, and options as one generic financial product component collection.
   - Current collection index: `product/component/GenericProductComponent`.
   - Target collection layout:
     - `product/component/core/`: shared component attribute overlays.
@@ -47,6 +47,7 @@ This TODO defines how real-world style indicators should affect product prices, 
   - Implementation owners remain `product/component/fund/`, `product/component/structured/`, `product/component/derivative/future/`, and `product/component/derivative/option/`.
   - The collection must not own product state, valuation formulas, persistence, or UI rendering.
   - `FinancialProductType.FUND`, `STRUCTURED_PRODUCT`, `FUTURE`, and `OPTION` are collection members.
+  - Current implementation: `ComponentCollectionIndex` exposes collection entries and default overlay attributes without owning product behavior.
 
 - [ ] Resolve current component path/package alignment gaps.
   - Source files for fund, structured, and derivative implementations are physically under `product/component/*`.
@@ -55,13 +56,14 @@ This TODO defines how real-world style indicators should affect product prices, 
   - Preferred target from the component architecture: `product/component/fund/`, `product/component/structured/`, `product/component/derivative/future/`, and `product/component/derivative/option/`.
   - Do not add new product behavior until this mismatch is either fixed or explicitly documented as a temporary migration state.
 
-- [ ] Add `product/component/core/` as the shared component attribute overlay layer.
+- [x] Add `product/component/core/` as the shared component attribute overlay layer.
   - Core answers "what extra financial attributes are layered onto this product?", not "which concrete product owns behavior?"
   - Add planned types: `ComponentAttribute`, `ComponentAttributeSet`, `ComponentOverlay`, and `ComponentOverlayResolver`.
   - Overlay attributes should be composable and typed: `UNDERLYING_EXPOSURE`, `MATURITY`, `SETTLEMENT`, `PAYOFF_SHAPE`, `BASKET_EXPOSURE`, `NAV_ANCHOR`, `LEVERAGE`, `CLAIM_PRIORITY`, `LIQUIDITY_WRAPPER`, and `TRACKING_TARGET`.
   - Concrete products attach or expose overlays; concrete product state remains in the owner package.
   - `market/financial` may consume resolved overlays as generic signal or anchor metadata, but must not import product internals.
   - Overlay defaults, thresholds, and product-specific rule selections must live in JSON config or rule data when they are tunable.
+  - Current implementation: `ComponentAttribute`, `ComponentAttributeSet`, `ComponentOverlay`, and `ComponentOverlayResolver` provide structural overlay metadata.
 
 - [ ] Separate the two derivative implementations.
   - Current `product/component/derivative/` mixes futures and options; target split:
@@ -862,7 +864,9 @@ These items stay product-agnostic under `market/financial/`.
   - Index-tracking funds now seed holdings from `MarketIndexState.componentIds()` instead of arbitrary equities.
   - Added tracking metrics for NAV/share, tracking error, premium/discount, and creation/redemption action.
   - `finance.fund.index_tracking_initial_allocation_ratio` and `finance.fund.creation_redemption_premium_threshold` control tracking-fund basket allocation and ETF-like action thresholds.
-- [ ] Phase 10: Add component `core` attribute overlay model and component `collection` read model under `product/component/`.
+- [x] Phase 10: Add component `core` attribute overlay model and component `collection` read model under `product/component/`.
+  - Added reusable overlay attributes/resolver under `product/component/core`.
+  - Added collection entries/index under `product/component/collection`.
 - [ ] Phase 11: Formalize commodity spot pricing architecture under `product/commodity/`, including the split between commodity attributes, physical inventory state, market cycle behavior, stabilizer, storage, spoilage, and source attribution.
 - [ ] Phase 12: Add commodity spot signal adapter under `product/commodity/`.
 - [ ] Phase 13: Add derivative pricing inputs under `product/component/derivative/future/` and `product/component/derivative/option/`.
