@@ -1,6 +1,7 @@
 package com.fluorineuck.minance.config;
 
 import com.fluorineuck.minance.market.financial.PriceSignalSource;
+import com.fluorineuck.minance.market.index.MarketIndexWeightingMethod;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -49,10 +50,10 @@ public record MarketConfig(
 
     public static List<IndexDefinition> defaultIndices() {
         return List.of(
-                new IndexDefinition("food_index", "Food Index", List.of("bread", "beef", "porkchop", "chicken", "mutton", "cod", "salmon", "apple")),
-                new IndexDefinition("crops_index", "Crops Index", List.of("wheat", "carrot", "potato", "beetroot", "melon", "pumpkin")),
-                new IndexDefinition("minerals_index", "Minerals Index", List.of("iron", "coal", "copper", "gold", "diamond", "emerald", "redstone", "lapis")),
-                new IndexDefinition("tools_index", "Tools Index", List.of("pickaxe", "axe", "shovel", "hoe", "sword", "helmet", "chestplate", "leggings", "boots"))
+                new IndexDefinition("food_index", "Food Index", List.of("bread", "beef", "porkchop", "chicken", "mutton", "cod", "salmon", "apple"), MarketIndexWeightingMethod.EQUAL_WEIGHTED, 0L, 0L),
+                new IndexDefinition("crops_index", "Crops Index", List.of("wheat", "carrot", "potato", "beetroot", "melon", "pumpkin"), MarketIndexWeightingMethod.EQUAL_WEIGHTED, 0L, 0L),
+                new IndexDefinition("minerals_index", "Minerals Index", List.of("iron", "coal", "copper", "gold", "diamond", "emerald", "redstone", "lapis"), MarketIndexWeightingMethod.EQUAL_WEIGHTED, 0L, 0L),
+                new IndexDefinition("tools_index", "Tools Index", List.of("pickaxe", "axe", "shovel", "hoe", "sword", "helmet", "chestplate", "leggings", "boots"), MarketIndexWeightingMethod.EQUAL_WEIGHTED, 0L, 0L)
         );
     }
 
@@ -248,11 +249,32 @@ public record MarketConfig(
         ).apply(instance, IndexConfig::new));
     }
 
-    public record IndexDefinition(String id, String name, List<String> matchers) {
+    public record IndexDefinition(
+            String id,
+            String name,
+            List<String> matchers,
+            MarketIndexWeightingMethod weightingMethod,
+            long reconstitutionIntervalTicks,
+            long rebalanceIntervalTicks
+    ) {
+        public IndexDefinition {
+            if (id == null || id.isBlank()) {
+                throw new IllegalArgumentException("id must not be blank");
+            }
+            name = name == null || name.isBlank() ? id : name;
+            matchers = matchers == null ? List.of() : List.copyOf(matchers);
+            weightingMethod = weightingMethod == null ? MarketIndexWeightingMethod.EQUAL_WEIGHTED : weightingMethod;
+            reconstitutionIntervalTicks = Math.max(0L, reconstitutionIntervalTicks);
+            rebalanceIntervalTicks = Math.max(0L, rebalanceIntervalTicks);
+        }
+
         public static final Codec<IndexDefinition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.STRING.fieldOf("id").forGetter(IndexDefinition::id),
                 Codec.STRING.fieldOf("name").forGetter(IndexDefinition::name),
-                Codec.STRING.listOf().fieldOf("matchers").forGetter(IndexDefinition::matchers)
+                Codec.STRING.listOf().fieldOf("matchers").forGetter(IndexDefinition::matchers),
+                MarketIndexWeightingMethod.CODEC.optionalFieldOf("weighting_method", MarketIndexWeightingMethod.EQUAL_WEIGHTED).forGetter(IndexDefinition::weightingMethod),
+                Codec.LONG.optionalFieldOf("reconstitution_interval_ticks", 0L).forGetter(IndexDefinition::reconstitutionIntervalTicks),
+                Codec.LONG.optionalFieldOf("rebalance_interval_ticks", 0L).forGetter(IndexDefinition::rebalanceIntervalTicks)
         ).apply(instance, IndexDefinition::new));
     }
 

@@ -5,10 +5,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.LongTag;
 import net.minecraft.nbt.NumericTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
+import java.util.List;
 
 public final class MarketIndexState {
     private final String id;
@@ -16,6 +19,9 @@ public final class MarketIndexState {
     private long price;
     private long previousPrice;
     private int componentCount;
+    private List<String> componentIds = List.of();
+    private long lastReconstitutionTick = -1L;
+    private long lastRebalanceTick = -1L;
     private final Deque<Long> history = new ArrayDeque<>();
 
     public MarketIndexState(String id, String name, long price) {
@@ -32,12 +38,22 @@ public final class MarketIndexState {
     public long previousPrice() { return previousPrice; }
     public long delta() { return price - previousPrice; }
     public int componentCount() { return componentCount; }
+    public List<String> componentIds() { return List.copyOf(componentIds); }
+    public long lastReconstitutionTick() { return lastReconstitutionTick; }
+    public long lastRebalanceTick() { return lastRebalanceTick; }
     public Deque<Long> history() { return new ArrayDeque<>(history); }
 
     public void update(long nextPrice, int componentCount, int historyLimit) {
+        update(nextPrice, componentCount, componentIds, historyLimit, lastReconstitutionTick, lastRebalanceTick);
+    }
+
+    public void update(long nextPrice, int componentCount, List<String> componentIds, int historyLimit, long lastReconstitutionTick, long lastRebalanceTick) {
         this.previousPrice = this.price;
         this.price = Math.max(1L, nextPrice);
         this.componentCount = Math.max(0, componentCount);
+        this.componentIds = componentIds == null ? List.of() : List.copyOf(componentIds);
+        this.lastReconstitutionTick = lastReconstitutionTick;
+        this.lastRebalanceTick = lastRebalanceTick;
         remember(this.price, historyLimit);
     }
 
@@ -48,6 +64,11 @@ public final class MarketIndexState {
         tag.putLong("price", price);
         tag.putLong("previous_price", previousPrice);
         tag.putInt("component_count", componentCount);
+        tag.putLong("last_reconstitution_tick", lastReconstitutionTick);
+        tag.putLong("last_rebalance_tick", lastRebalanceTick);
+        ListTag componentTag = new ListTag();
+        componentIds.forEach(value -> componentTag.add(StringTag.valueOf(value)));
+        tag.put("component_ids", componentTag);
         ListTag historyTag = new ListTag();
         history.forEach(value -> historyTag.add(LongTag.valueOf(value)));
         tag.put("history", historyTag);
@@ -58,6 +79,14 @@ public final class MarketIndexState {
         MarketIndexState state = new MarketIndexState(tag.getString("id"), tag.getString("name"), tag.getLong("price"));
         state.previousPrice = tag.getLong("previous_price");
         state.componentCount = tag.getInt("component_count");
+        state.lastReconstitutionTick = tag.contains("last_reconstitution_tick", Tag.TAG_LONG) ? tag.getLong("last_reconstitution_tick") : -1L;
+        state.lastRebalanceTick = tag.contains("last_rebalance_tick", Tag.TAG_LONG) ? tag.getLong("last_rebalance_tick") : -1L;
+        ListTag componentTag = tag.getList("component_ids", Tag.TAG_STRING);
+        List<String> componentIds = new ArrayList<>();
+        for (int i = 0; i < componentTag.size(); i++) {
+            componentIds.add(componentTag.getString(i));
+        }
+        state.componentIds = List.copyOf(componentIds);
         state.history.clear();
         ListTag historyTag = tag.getList("history", Tag.TAG_LONG);
         for (int i = 0; i < historyTag.size(); i++) {

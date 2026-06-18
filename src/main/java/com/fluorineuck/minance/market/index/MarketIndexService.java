@@ -2,7 +2,6 @@ package com.fluorineuck.minance.market.index;
 
 import com.fluorineuck.minance.config.ConfigRegistry;
 import com.fluorineuck.minance.config.MarketConfig;
-import com.fluorineuck.minance.product.commodity.spot.SpotMarketAsset;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -10,7 +9,6 @@ import net.minecraft.nbt.Tag;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public final class MarketIndexService {
@@ -33,9 +31,13 @@ public final class MarketIndexService {
     }
 
     public void updateFromSpotMarket() {
+        updateFromSpotMarket(-1L);
+    }
+
+    public void updateFromSpotMarket(long gameTime) {
         ensureDefaults();
         for (MarketConfig.IndexDefinition definition : ConfigRegistry.INSTANCE.market().index().indices()) {
-            update(definition);
+            update(definition, gameTime);
         }
     }
 
@@ -57,53 +59,29 @@ public final class MarketIndexService {
         ensureDefaults();
     }
 
-    private void update(MarketConfig.IndexDefinition definition) {
-        double total = 0.0D;
-        int count = 0;
+    private void update(MarketConfig.IndexDefinition definition, long gameTime) {
         MarketConfig config = ConfigRegistry.INSTANCE.market();
-        for (SpotMarketAsset asset : SpotMarketService.INSTANCE.assets().values()) {
-            String item = asset.item().getPath().toLowerCase(Locale.ROOT);
-            if (definition.matchers().stream().anyMatch(item::contains)) {
-                total += indexComponentPrice(asset, config);
-                count++;
-            }
-        }
-        if (count <= 0) {
+        MarketIndexState state = indices.computeIfAbsent(definition.id(), ignored -> new MarketIndexState(definition.id(), definition.name(), 1L));
+        boolean reconstitutionDue = cadenceDue(gameTime, state.lastReconstitutionTick(), definition.reconstitutionIntervalTicks()) || state.componentIds().isEmpty();
+        boolean rebalanceDue = cadenceDue(gameTime, state.lastRebalanceTick(), definition.rebalanceIntervalTicks());
+        if (!reconstitutionDue && !rebalanceDue) {
             return;
         }
-        long price = Math.max(1L, Math.round(total / count));
-        indices.computeIfAbsent(definition.id(), ignored -> new MarketIndexState(definition.id(), definition.name(), price))
-                .update(price, count, config.priceHistoryLimit());
-    }
-
-    private static double indexComponentPrice(SpotMarketAsset asset, MarketConfig config) {
-        double basePrice = Math.max(1.0D, asset.currentPrice());
-        double buyVolume = asset.demandQuantity();
-        double sellVolume = asset.supplyQuantity();
-        int buyOrders = asset.buyOrderCount();
-        int sellOrders = asset.sellOrderCount();
-        double volumeTotal = buyVolume + sellVolume;
-        int orderTotal = buyOrders + sellOrders;
-        if (volumeTotal <= 0.0D && orderTotal <= 0) {
-            return basePrice;
+        List<MarketIndexComponent> components = reconstitutionDue
+                ? MarketIndexComponentCollector.collect(definition, SpotMarketService.INSTANCE.assets().values())
+                : MarketIndexComponentCollector.collectByIds(state.componentIds(), SpotMarketService.INSTANCE.assets().values());
+        if (components.isEmpty()) {
+            return;
         }
-        double volumeImbalance = (buyVolume - sellVolume) / Math.max(1.0D, volumeTotal);
-        double orderImbalance = (buyOrders - sellOrders) / (double) Math.max(1, orderTotal);
-        MarketConfig.IndexConfig index = config.index();
-        double pressure = volumeImbalance * index.volumeImbalanceWeight() + orderImbalanceContribution(index, orderImbalance);
-        double volatilityMultiplier = 1.0D + Math.min(index.volatilityMultiplierCap(), Math.max(0.0D, asset.volatility()));
-        double maxMove = Math.max(0.0D, index.maxOrderMove());
-        double move = pressure * Math.max(0.0D, index.orderPressureWeight()) * volatilityMultiplier;
-        move = clamp(move, -maxMove, maxMove);
-        return Math.max(1.0D, basePrice * (1.0D + move));
+        MarketIndexLevel level = MarketIndexLevelCalculator.INSTANCE.calculate(definition, components, config);
+        List<String> componentIds = components.stream().map(MarketIndexComponent::productId).toList();
+        long reconstitutionTick = reconstitutionDue ? gameTime : state.lastReconstitutionTick();
+        long rebalanceTick = rebalanceDue || reconstitutionDue ? gameTime : state.lastRebalanceTick();
+        state.update(level.price(), level.componentCount(), componentIds, config.priceHistoryLimit(), reconstitutionTick, rebalanceTick);
     }
 
-    private static double orderImbalanceContribution(MarketConfig.IndexConfig index, double orderImbalance) {
-        return orderImbalance * index.orderImbalanceWeight();
-    }
-
-    private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
+    private static boolean cadenceDue(long gameTime, long lastTick, long intervalTicks) {
+        return gameTime < 0L || lastTick < 0L || gameTime - lastTick >= Math.max(1L, intervalTicks);
     }
 
     private void ensureDefaults() {

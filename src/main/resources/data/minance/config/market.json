@@ -71,22 +71,34 @@
       {
         "id": "food_index",
         "name": "Food Index",
-        "matchers": ["bread", "beef", "porkchop", "chicken", "mutton", "cod", "salmon", "apple"]
+        "matchers": ["bread", "beef", "porkchop", "chicken", "mutton", "cod", "salmon", "apple"],
+        "weighting_method": "equal_weighted",
+        "reconstitution_interval_ticks": 24000,
+        "rebalance_interval_ticks": 400
       },
       {
         "id": "crops_index",
         "name": "Crops Index",
-        "matchers": ["wheat", "carrot", "potato", "beetroot", "melon", "pumpkin"]
+        "matchers": ["wheat", "carrot", "potato", "beetroot", "melon", "pumpkin"],
+        "weighting_method": "equal_weighted",
+        "reconstitution_interval_ticks": 24000,
+        "rebalance_interval_ticks": 400
       },
       {
         "id": "minerals_index",
         "name": "Minerals Index",
-        "matchers": ["iron", "coal", "copper", "gold", "diamond", "emerald", "redstone", "lapis"]
+        "matchers": ["iron", "coal", "copper", "gold", "diamond", "emerald", "redstone", "lapis"],
+        "weighting_method": "equal_weighted",
+        "reconstitution_interval_ticks": 24000,
+        "rebalance_interval_ticks": 400
       },
       {
         "id": "tools_index",
         "name": "Tools Index",
-        "matchers": ["pickaxe", "axe", "shovel", "hoe", "sword", "helmet", "chestplate", "leggings", "boots"]
+        "matchers": ["pickaxe", "axe", "shovel", "hoe", "sword", "helmet", "chestplate", "leggings", "boots"],
+        "weighting_method": "equal_weighted",
+        "reconstitution_interval_ticks": 24000,
+        "rebalance_interval_ticks": 400
       }
     ],
     "volume_imbalance_weight": 0.75,

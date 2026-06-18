@@ -191,6 +191,7 @@ Index logic should separate index calculation from investable products that trac
   - `IndexConstituent`: product id, free-float quantity or basket quantity, weight, cap, sector/category.
   - `IndexLevel`: current level, previous level, divisor, history, component count.
   - `IndexRebalance`: added/removed constituents, target weights, turnover, effective tick.
+  - Current implementation: commodity-backed index definitions now include configurable weighting method plus reconstitution/rebalance cadence; index state remembers component ids and maintenance ticks.
 
 - [ ] Support stock/equity index methodologies.
   - Market-cap weighted: `sharePrice * sharesOutstanding`.
@@ -854,7 +855,9 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.
   - Added immutable player institution planning records and `PlayerInstitutionPlanningService`.
   - Player plans convert to the same `FinancialServiceProviderContext` used by the default provider, with explicit terminal permission checks.
-- [ ] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
+- [x] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
+  - Added index component snapshots, weighting methods, level calculator, remembered composition, and reconstitution/rebalance tick state.
+  - Per-index `weighting_method`, `reconstitution_interval_ticks`, and `rebalance_interval_ticks` are configured in `market.json`.
 - [ ] Phase 9: Add index-tracking fund/ETF mechanics, including NAV, tracking error, and creation/redemption.
 - [ ] Phase 10: Add component `core` attribute overlay model and component `collection` read model under `product/component/`.
 - [ ] Phase 11: Formalize commodity spot pricing architecture under `product/commodity/`, including the split between commodity attributes, physical inventory state, market cycle behavior, stabilizer, storage, spoilage, and source attribution.
@@ -891,7 +894,7 @@ These items stay product-agnostic under `market/financial/`.
 - [ ] Debug output can explain why a price moved.
 - [ ] New non-single-purpose behavior is implemented as focused source files in the nearest category folder, not added to already broad classes.
 - [ ] New callable behavior has one documented entry point and the nearest second-level `CALLING.md` is updated in the same change.
-- [ ] Index levels are calculated independently from index-tracking fund prices.
+- [x] Index levels are calculated independently from index-tracking fund prices.
 - [ ] Index-tracking products report NAV, market price, tracking error, and premium/discount.
 - [ ] ETF-like creation/redemption flows affect both the fund product and the underlying basket.
 - [ ] Institution role behavior is represented through explicit deterministic services or adapters, not hidden inside price formulas.

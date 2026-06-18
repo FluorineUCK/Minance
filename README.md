@@ -17,7 +17,7 @@ Minance 是一个独立金融模拟 NeoForge 模组。当前目标是在 Minecra
 
 配置和规则分为两层：
 
-- `src/main/resources/data/minance/config/*.json`: 数值配置、阈值、权重、节奏和模型参数，目前包含 `commodity`、`company`、`economy`、`finance`、`market`、`risk`、`trading`。
+- `src/main/resources/data/minance/config/*.json`: 数值配置、阈值、权重、节奏和模型参数，目前包含 `commodity`、`company`、`economy`、`finance`、`market`、`risk`、`trading`。`market.index.indices` 可配置指数成分匹配、权重方法、再构成和再平衡节奏。
 - `src/main/resources/data/minance/minance_rules/company_names/default.json`: 村庄公司的名称词库。
 - `src/main/resources/data/minance/minance_rules/professions/*.json`: 村民职业的预期股份、生产商品、需求商品、风险偏好和交易节奏。
 
@@ -71,7 +71,7 @@ required_capital = minimum_capital_per_share * sum(expected_shares from villager
 - `product/component`: 通用金融产品组件集合，当前覆盖 fund、structured、future、option；规划新增 `core` 属性叠加层和 `collection` 集合索引。
 - `product/component/derivative`: 当前承载商品期货、期权、合约状态、交割方式和多层衍生品展开；规划拆分为 `product/component/derivative/future` 和 `product/component/derivative/option`。
 - `product/equity`: 村庄公司股权资产和可交易股权同步。
-- `market/index`: `food_index`、`crops_index`、`minerals_index`、`tools_index`。
+- `market/index`: `food_index`、`crops_index`、`minerals_index`、`tools_index`，并支持配置化权重方法、成分再构成和再平衡节奏。
 - `product/component/fund`: 基金状态、持仓和指数跟踪基金创建。
 - `product/component/structured`: 结构化产品状态和受益人声明。
 

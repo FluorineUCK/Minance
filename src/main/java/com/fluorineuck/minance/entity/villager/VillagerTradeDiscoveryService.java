@@ -92,12 +92,12 @@ public final class VillagerTradeDiscoveryService {
         boolean settlementDue = lastSettlementTick < 0L || now - lastSettlementTick >= Math.max(1, config.settlementIntervalTicks());
         if (settlementDue) {
             SpotMarketService.INSTANCE.updatePrices();
-            MarketIndexService.INSTANCE.updateFromSpotMarket();
+            MarketIndexService.INSTANCE.updateFromSpotMarket(now);
             FundService.INSTANCE.updateAllFunds();
             lastSettlementTick = now;
             lastIndexUpdateTick = now;
         } else if (lastIndexUpdateTick < 0L || now - lastIndexUpdateTick >= Math.max(1, config.indexUpdateIntervalTicks())) {
-            MarketIndexService.INSTANCE.updateFromSpotMarket();
+            MarketIndexService.INSTANCE.updateFromSpotMarket(now);
             lastIndexUpdateTick = now;
         }
     }
