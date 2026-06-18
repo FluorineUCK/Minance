@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.structured;
+package com.fluorineuck.minance.product.component.structured;
 
 import net.minecraft.nbt.CompoundTag;
 

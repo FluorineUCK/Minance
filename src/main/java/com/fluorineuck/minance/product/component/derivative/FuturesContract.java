@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.derivative;
+package com.fluorineuck.minance.product.component.derivative;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;

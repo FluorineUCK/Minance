@@ -49,12 +49,11 @@ This TODO defines how real-world style indicators should affect product prices, 
   - `FinancialProductType.FUND`, `STRUCTURED_PRODUCT`, `FUTURE`, and `OPTION` are collection members.
   - Current implementation: `ComponentCollectionIndex` exposes collection entries and default overlay attributes without owning product behavior.
 
-- [ ] Resolve current component path/package alignment gaps.
+- [x] Align component filesystem paths, Java packages, and imports.
   - Source files for fund, structured, and derivative implementations are physically under `product/component/*`.
-  - Their Java package declarations still use `com.fluorineuck.minance.product.fund`, `product.structured`, and `product.derivative`.
-  - Final target should align filesystem, Java package declarations, docs, commands, persistence, and UI imports.
-  - Preferred target from the component architecture: `product/component/fund/`, `product/component/structured/`, `product/component/derivative/future/`, and `product/component/derivative/option/`.
-  - Do not add new product behavior until this mismatch is either fixed or explicitly documented as a temporary migration state.
+  - Java package declarations, imports, docs, commands, persistence, and UI references now use `com.fluorineuck.minance.product.component.*`.
+  - Current concrete owners are `product/component/fund/`, `product/component/structured/`, and the interim flat `product/component/derivative/`.
+  - Splitting derivatives into `product/component/derivative/future/` and `product/component/derivative/option/` remains a separate implementation phase.
 
 - [x] Add `product/component/core/` as the shared component attribute overlay layer.
   - Core answers "what extra financial attributes are layered onto this product?", not "which concrete product owns behavior?"

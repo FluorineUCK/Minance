@@ -7,7 +7,7 @@ import com.fluorineuck.minance.market.index.MarketIndexState;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketAsset;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketRow;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
-import com.fluorineuck.minance.product.fund.FundState;
+import com.fluorineuck.minance.product.component.fund.FundState;
 import com.lowdragmc.lowdraglib2.gui.ui.UIElement;
 import com.lowdragmc.lowdraglib2.gui.ui.rendering.GUIContext;
 import com.lowdragmc.lowdraglib2.registry.annotation.LDLRegister;

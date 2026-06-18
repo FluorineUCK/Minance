@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.derivative;
+package com.fluorineuck.minance.product.component.derivative;
 
 import com.fluorineuck.minance.config.ConfigRegistry;
 import com.fluorineuck.minance.config.FinanceConfig;

@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.fund;
+package com.fluorineuck.minance.product.component.fund;
 
 import com.fluorineuck.minance.market.financial.FinancialProductType;
 import net.minecraft.nbt.CompoundTag;

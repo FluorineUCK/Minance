@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.fund;
+package com.fluorineuck.minance.product.component.fund;
 
 import com.fluorineuck.minance.config.FinanceConfig;
 import com.fluorineuck.minance.market.index.MarketIndexState;

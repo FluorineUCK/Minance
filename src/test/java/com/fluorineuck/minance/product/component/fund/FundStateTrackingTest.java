@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.fund;
+package com.fluorineuck.minance.product.component.fund;
 
 import net.minecraft.nbt.CompoundTag;
 import org.junit.jupiter.api.Test;

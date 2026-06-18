@@ -8,7 +8,7 @@ import com.fluorineuck.minance.rule.MinanceRuleRegistries;
 import com.fluorineuck.minance.rule.ProfessionTradeCategoryRule;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
 import com.fluorineuck.minance.market.index.MarketIndexService;
-import com.fluorineuck.minance.product.fund.FundService;
+import com.fluorineuck.minance.product.component.fund.FundService;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketSourceType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

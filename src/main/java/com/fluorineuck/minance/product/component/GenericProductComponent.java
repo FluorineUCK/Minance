@@ -7,10 +7,10 @@ import java.util.Optional;
 import java.util.Set;
 
 public enum GenericProductComponent {
-    FUTURE(FinancialProductType.FUTURE, "future", "product/derivative"),
-    OPTION(FinancialProductType.OPTION, "option", "product/derivative"),
-    FUND(FinancialProductType.FUND, "fund", "product/fund"),
-    STRUCTURED(FinancialProductType.STRUCTURED_PRODUCT, "structured", "product/structured");
+    FUTURE(FinancialProductType.FUTURE, "future", "product/component/derivative"),
+    OPTION(FinancialProductType.OPTION, "option", "product/component/derivative"),
+    FUND(FinancialProductType.FUND, "fund", "product/component/fund"),
+    STRUCTURED(FinancialProductType.STRUCTURED_PRODUCT, "structured", "product/component/structured");
 
     private static final Set<FinancialProductType> FINANCIAL_TYPES = Set.copyOf(EnumSet.of(
             FinancialProductType.FUTURE,

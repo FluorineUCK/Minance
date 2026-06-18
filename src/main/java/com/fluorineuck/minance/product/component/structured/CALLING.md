@@ -1,4 +1,4 @@
-# product/structured Calling Guide
+# product/component/structured Calling Guide
 
 ## Scope
 

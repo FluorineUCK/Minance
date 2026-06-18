@@ -11,10 +11,10 @@ import com.fluorineuck.minance.entity.institution.FinancialServiceProviderContex
 import com.fluorineuck.minance.market.index.MarketIndexService;
 import com.fluorineuck.minance.market.financial.FinancialMarketEngine;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketAsset;
-import com.fluorineuck.minance.product.derivative.CommodityDerivativeService;
+import com.fluorineuck.minance.product.component.derivative.CommodityDerivativeService;
 import com.fluorineuck.minance.product.equity.EquityMarketService;
-import com.fluorineuck.minance.product.fund.FundService;
-import com.fluorineuck.minance.product.structured.StructuredProductService;
+import com.fluorineuck.minance.product.component.fund.FundService;
+import com.fluorineuck.minance.product.component.structured.StructuredProductService;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketRow;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
 import com.mojang.brigadier.CommandDispatcher;

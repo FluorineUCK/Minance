@@ -6,7 +6,7 @@ import com.fluorineuck.minance.entity.village.LoadedVillageScan;
 import com.fluorineuck.minance.market.financial.FinancialMarketEngine;
 import com.fluorineuck.minance.market.financial.FinancialMarketResult;
 import com.fluorineuck.minance.market.financial.FinancialProductType;
-import com.fluorineuck.minance.product.derivative.CommodityDerivativeService;
+import com.fluorineuck.minance.product.component.derivative.CommodityDerivativeService;
 import com.fluorineuck.minance.product.equity.EquityMarketService;
 import com.fluorineuck.minance.product.equity.EquityAssetType;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;

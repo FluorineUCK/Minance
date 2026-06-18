@@ -1,4 +1,4 @@
-# product/derivative Calling Guide
+# product/component/derivative Calling Guide
 
 ## Scope
 

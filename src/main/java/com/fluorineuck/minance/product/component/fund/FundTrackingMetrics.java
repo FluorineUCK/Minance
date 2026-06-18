@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.fund;
+package com.fluorineuck.minance.product.component.fund;
 
 public record FundTrackingMetrics(
         String indexId,

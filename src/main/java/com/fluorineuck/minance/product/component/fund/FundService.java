@@ -1,4 +1,4 @@
-package com.fluorineuck.minance.product.fund;
+package com.fluorineuck.minance.product.component.fund;
 
 import com.fluorineuck.minance.config.ConfigRegistry;
 import com.fluorineuck.minance.entity.company.VillageCompany;
@@ -9,7 +9,7 @@ import com.fluorineuck.minance.market.financial.FinancialProductType;
 import com.fluorineuck.minance.market.index.MarketIndexService;
 import com.fluorineuck.minance.market.index.MarketIndexState;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
-import com.fluorineuck.minance.product.derivative.CommodityDerivativeService;
+import com.fluorineuck.minance.product.component.derivative.CommodityDerivativeService;
 import com.fluorineuck.minance.product.equity.EquityAsset;
 import com.fluorineuck.minance.product.equity.EquityMarketService;
 import net.minecraft.nbt.CompoundTag;
