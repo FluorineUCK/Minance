@@ -101,7 +101,7 @@ required_capital = minimum_capital_per_share * sum(expected_shares from villager
 - 面板包含公司/候选公司、商品、指数、衍生品、订单流、产品详情和调试信息。
 - 图表元素支持 K 线、柱状图、成交量、OHLC 和移动均线等市场视图。
 
-后续玩家应能通过方块、菜单、权限或公司/机构所有权创建自己的金融服务入口。玩家自建机构应复用同一批市场、产品、清算、授信和托管服务接口，而不是复制一套 UI 内逻辑。
+后续玩家应能通过方块、菜单、权限或公司/机构所有权创建自己的金融服务入口。玩家自建机构规划由 `PlayerInstitutionPlanningService` 表示，可记录所有者、操作员权限、服务授权和牌照，并转换为同一类 `FinancialServiceProviderContext`。玩家自建机构应复用同一批市场、产品、清算、授信和托管服务接口，而不是复制一套 UI 内逻辑。
 
 ## 命令
 
@@ -157,7 +157,7 @@ src/main/java/com/fluorineuck/minance/
 |-- config/              # Java 侧配置类型、默认值和配置注册
 |-- data/                # 数据包/配置加载器、重载器和世界存档边界
 |-- entity/company/      # 村庄公司、候选公司、价格条和财务报告
-|-- entity/institution/  # 金融机构身份、角色授权、服务主体上下文和机构来源信号入口
+|-- entity/institution/  # 金融机构身份、角色授权、玩家机构规划、服务主体上下文和机构来源信号入口
 |-- entity/player/       # 玩家经济身份和未来玩家行为入口
 |-- entity/village/      # 已加载村庄扫描和候选公司聚合
 |-- entity/villager/     # 村民交易发现和市场行为入口

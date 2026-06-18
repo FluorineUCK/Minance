@@ -4,5 +4,6 @@ public enum FinancialServiceAccessPoint {
     UNKNOWN,
     MARKET_DASHBOARD,
     COMMAND,
-    BLOCK_TERMINAL
+    BLOCK_TERMINAL,
+    MENU_TERMINAL
 }

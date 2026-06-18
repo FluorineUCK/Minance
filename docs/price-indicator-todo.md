@@ -121,7 +121,7 @@ The simulation should model only the few institution roles needed for price form
 
 - [ ] Place institution state in the right domain.
   - Default public institution identity and role grants: `entity/institution/`.
-  - Player-created institution identity, licenses, service grants, ownership, and operator permissions: future `entity/institution/` plus `entity/player/`.
+  - Player-created institution identity, licenses, service grants, ownership, and operator permissions: `entity/institution/` plus future `entity/player/` player facts.
   - Issuer fields for companies: `entity/company/`.
   - Issuer adapters for products: the corresponding `product/*/` package.
   - Asset manager state: `product/component/fund/` and index-tracking product code.
@@ -129,7 +129,7 @@ The simulation should model only the few institution roles needed for price form
   - Liquidity provider state: `market/financial/`.
   - ETF creation/redemption rules: `product/component/fund/` or `product/index/` if created, with liquidity effects emitted into `market/financial/`.
   - Clearing, custody, margin, and default state: `market/financial/` plus `product/liabilities/`.
-  - Current implementation: default public provider identity, role grants, access-point metadata, and provider context live under `entity/institution/`.
+  - Current implementation: default public provider identity, role grants, access-point metadata, provider context, and player institution planning records live under `entity/institution/`.
 
 - [x] Define the current market UI as a default institution service terminal.
   - The current `MarketPanelElement` / LDLib dashboard should be treated as a terminal for the default `central_bank_and_securities` provider.
@@ -149,6 +149,7 @@ The simulation should model only the few institution roles needed for price form
   - Player institutions may compete with or route through the default public provider depending on configuration and licenses.
   - Player access should come from in-world blocks, menus, contracts, permissions, or company ownership, not only from `/market` commands or the global debug UI.
   - If a player provider lacks a capability, calls should fail with an explicit missing-service state instead of falling back silently to the default provider.
+  - Current implementation: `PlayerInstitutionPlan` represents player-owned providers with ownership, operator permissions, service grants, and licenses; block/menu persistence remains future work.
 
 - [ ] Add minimal institution balance-sheet mechanics.
   - Assets: cash, inventory, securities, loans, collateral, receivables.
@@ -850,7 +851,9 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 6: Add default `central_bank_and_securities` provider identity and service-provider context for UI/command access.
   - Added `FinancialInstitutionDirectory`, `FinancialServiceProviderContext`, and `FinancialServiceAccessPoint`.
   - UI and command access now resolve explicit provider contexts while preserving current default-provider behavior.
-- [ ] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.
+- [x] Phase 7: Add player-created institution planning: ownership, permissions, licenses, service grants, and future block/menu terminals.
+  - Added immutable player institution planning records and `PlayerInstitutionPlanningService`.
+  - Player plans convert to the same `FinancialServiceProviderContext` used by the default provider, with explicit terminal permission checks.
 - [ ] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
 - [ ] Phase 9: Add index-tracking fund/ETF mechanics, including NAV, tracking error, and creation/redemption.
 - [ ] Phase 10: Add component `core` attribute overlay model and component `collection` read model under `product/component/`.
@@ -894,7 +897,7 @@ These items stay product-agnostic under `market/financial/`.
 - [ ] Institution role behavior is represented through explicit deterministic services or adapters, not hidden inside price formulas.
 - [x] Current market UI is documented and implemented as a terminal for the default `central_bank_and_securities` provider, not as the owner of market behavior.
 - [ ] Domain calls that depend on service provider behavior can accept explicit provider context.
-- [ ] Player-owned financial institutions can be represented without duplicating default-provider logic or requiring `/market` debug access.
+- [x] Player-owned financial institutions can be represented without duplicating default-provider logic or requiring `/market` debug access.
 - [ ] Missing player-provider capabilities fail explicitly instead of silently routing to the default provider.
 - [ ] No LLM-Agent, prompt-driven actor, or external model call is required or allowed for market participants.
 - [ ] Re-running the same saved state and config produces the same institution decisions, except where an explicit seeded pseudo-random source is part of the state.

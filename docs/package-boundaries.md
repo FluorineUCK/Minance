@@ -84,7 +84,7 @@ Review rule: a feature change is incomplete if it adds behavior without a unifie
 ## Entity Scope
 
 - `entity/company/`: village company identity, candidate formation, capitalization, shareholders, raw financial reports, company price bars, and company-only accounting facts.
-- `entity/institution/`: financial institution identities, role grants, service-provider contexts, the current default `central_bank_and_securities` provider, and future player-created providers. It owns institution identity, ownership, operator permissions, service grants, licenses, provider metadata, and deterministic institution-origin signal requests, but not market pricing or product payoff logic.
+- `entity/institution/`: financial institution identities, role grants, player institution planning records, service-provider contexts, the current default `central_bank_and_securities` provider, and future persisted player-created providers. It owns institution identity, ownership, operator permissions, service grants, licenses, provider metadata, and deterministic institution-origin signal requests, but not market pricing or product payoff logic.
 - `entity/village/`: loaded-village scanning and village-level aggregation.
 - `entity/villager/`: villager profession and trade discovery that emits supply/demand inputs into product or market services.
 - `entity/player/`: player economic identity, player-origin intents, and future player-facing actor state.
