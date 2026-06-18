@@ -858,7 +858,10 @@ These items stay product-agnostic under `market/financial/`.
 - [x] Phase 8: Generalize index definitions, index levels, reconstitution, and rebalance rules under `market/index/`.
   - Added index component snapshots, weighting methods, level calculator, remembered composition, and reconstitution/rebalance tick state.
   - Per-index `weighting_method`, `reconstitution_interval_ticks`, and `rebalance_interval_ticks` are configured in `market.json`.
-- [ ] Phase 9: Add index-tracking fund/ETF mechanics, including NAV, tracking error, and creation/redemption.
+- [x] Phase 9: Add index-tracking fund/ETF mechanics, including NAV, tracking error, and creation/redemption.
+  - Index-tracking funds now seed holdings from `MarketIndexState.componentIds()` instead of arbitrary equities.
+  - Added tracking metrics for NAV/share, tracking error, premium/discount, and creation/redemption action.
+  - `finance.fund.index_tracking_initial_allocation_ratio` and `finance.fund.creation_redemption_premium_threshold` control tracking-fund basket allocation and ETF-like action thresholds.
 - [ ] Phase 10: Add component `core` attribute overlay model and component `collection` read model under `product/component/`.
 - [ ] Phase 11: Formalize commodity spot pricing architecture under `product/commodity/`, including the split between commodity attributes, physical inventory state, market cycle behavior, stabilizer, storage, spoilage, and source attribution.
 - [ ] Phase 12: Add commodity spot signal adapter under `product/commodity/`.
@@ -895,7 +898,7 @@ These items stay product-agnostic under `market/financial/`.
 - [ ] New non-single-purpose behavior is implemented as focused source files in the nearest category folder, not added to already broad classes.
 - [ ] New callable behavior has one documented entry point and the nearest second-level `CALLING.md` is updated in the same change.
 - [x] Index levels are calculated independently from index-tracking fund prices.
-- [ ] Index-tracking products report NAV, market price, tracking error, and premium/discount.
+- [x] Index-tracking products report NAV, market price, tracking error, and premium/discount.
 - [ ] ETF-like creation/redemption flows affect both the fund product and the underlying basket.
 - [ ] Institution role behavior is represented through explicit deterministic services or adapters, not hidden inside price formulas.
 - [x] Current market UI is documented and implemented as a terminal for the default `central_bank_and_securities` provider, not as the owner of market behavior.

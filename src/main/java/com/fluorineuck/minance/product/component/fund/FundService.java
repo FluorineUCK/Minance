@@ -7,6 +7,7 @@ import com.fluorineuck.minance.market.financial.FinancialMarketEngine;
 import com.fluorineuck.minance.market.financial.FinancialMarketResult;
 import com.fluorineuck.minance.market.financial.FinancialProductType;
 import com.fluorineuck.minance.market.index.MarketIndexService;
+import com.fluorineuck.minance.market.index.MarketIndexState;
 import com.fluorineuck.minance.product.commodity.spot.SpotMarketService;
 import com.fluorineuck.minance.product.derivative.CommodityDerivativeService;
 import com.fluorineuck.minance.product.equity.EquityAsset;
@@ -44,14 +45,15 @@ public final class FundService {
     }
 
     public FundState createIndexTrackingFund(String fundId, String indexId, String manager, double cash, double shares) {
-        FundState fund = createFund(fundId, fundId, manager, "tracking:" + indexId, cash, shares);
-        MarketIndexService.INSTANCE.indices().getOrDefault(indexId, null);
-        int maxEquities = Math.max(0, ConfigRegistry.INSTANCE.finance().fund().indexTrackingMaxEquities());
-        List<EquityAsset> equities = EquityMarketService.INSTANCE.sortedAssets().stream().filter(EquityAsset::tradable).limit(maxEquities).toList();
-        double allocation = equities.isEmpty() ? 0.0D : cash / equities.size();
-        for (EquityAsset equity : equities) {
-            double quantity = allocation / Math.max(1L, equity.price());
-            fund.buyProduct(equity.id(), FinancialProductType.EQUITY, quantity, equity.price());
+        FundState fund = createFund(fundId, fundId, manager, FundState.TRACKING_STRATEGY_PREFIX + indexId, cash, shares);
+        fund.setTrackingIndexId(indexId);
+        MarketIndexState index = trackedIndex(fund);
+        if (index == null || index.componentIds().isEmpty()) {
+            MarketIndexService.INSTANCE.updateFromSpotMarket();
+            index = trackedIndex(fund);
+        }
+        if (index != null) {
+            IndexTrackingFundAdapter.INSTANCE.seedInitialBasket(fund, index, ConfigRegistry.INSTANCE.finance().fund(), this::resolvePrice);
         }
         updateFund(fund);
         return fund;
@@ -68,6 +70,7 @@ public final class FundService {
         long previous = fund.sharePrice();
         FinancialMarketResult result = FinancialMarketEngine.INSTANCE.update(fund.id(), FinancialProductType.FUND, previous, ConfigRegistry.INSTANCE.finance().defaultVolatility(FinancialProductType.FUND), 0, Math.max(1L, Math.round(fund.nav() / Math.max(1.0D, fund.totalFundShares()))));
         fund.setSharePrice(result.nextPrice());
+        refreshTrackingMetrics(fund);
     }
 
     public long resolvePrice(String productId, FinancialProductType productType, long fallbackPrice) {
@@ -81,6 +84,9 @@ public final class FundService {
                 return company.sharePrice();
             }
         }
+        if (productType == FinancialProductType.COMMODITY_SPOT) {
+            return resolveSpotPrice(productId, fallbackPrice);
+        }
         if (productType == FinancialProductType.FUTURE) {
             var future = CommodityDerivativeService.INSTANCE.futuresMarkets().get(productId);
             return future == null ? fallbackPrice : future.price();
@@ -93,6 +99,31 @@ public final class FundService {
             FundState fund = funds.get(productId);
             return fund == null ? fallbackPrice : fund.sharePrice();
         }
+        return resolveSpotPrice(productId, fallbackPrice);
+    }
+
+    public FundTrackingMetrics trackingMetrics(FundState fund) {
+        MarketIndexState index = trackedIndex(fund);
+        return IndexTrackingFundAdapter.INSTANCE.metrics(fund, index, ConfigRegistry.INSTANCE.finance().fund().creationRedemptionPremiumThreshold());
+    }
+
+    private void refreshTrackingMetrics(FundState fund) {
+        if (fund != null && fund.tracksIndex()) {
+            MarketIndexState index = trackedIndex(fund);
+            if (index != null) {
+                fund.recordTrackingMetrics(IndexTrackingFundAdapter.INSTANCE.metrics(fund, index, ConfigRegistry.INSTANCE.finance().fund().creationRedemptionPremiumThreshold()));
+            }
+        }
+    }
+
+    private MarketIndexState trackedIndex(FundState fund) {
+        if (fund == null || !fund.tracksIndex()) {
+            return null;
+        }
+        return MarketIndexService.INSTANCE.indices().get(fund.trackingIndexId());
+    }
+
+    private long resolveSpotPrice(String productId, long fallbackPrice) {
         return SpotMarketService.INSTANCE.rows().stream()
                 .filter(row -> row.item().toString().equals(productId) || row.item().getPath().equals(productId))
                 .findFirst()

@@ -59,7 +59,9 @@
     "option_premium_max_days": 100
   },
   "fund": {
-    "index_tracking_max_equities": 8
+    "index_tracking_max_equities": 8,
+    "index_tracking_initial_allocation_ratio": 1.0,
+    "creation_redemption_premium_threshold": 0.02
   },
   "equity_signal": {
     "signal_horizon_ticks": 2400,

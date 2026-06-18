@@ -34,7 +34,7 @@ public record FinanceConfig(
         return new FinanceConfig(
                 Map.copyOf(products),
                 new DerivativePricing(1, 100, 24_000L, 0.0005D, 0.05D, 0.001D, 100),
-                new FundRules(8),
+                new FundRules(8, 1.0D, 0.02D),
                 EquitySignalRules.defaults(),
                 InstitutionSignalRules.defaults()
         );
@@ -90,9 +90,21 @@ public record FinanceConfig(
         ).apply(instance, DerivativePricing::new));
     }
 
-    public record FundRules(int indexTrackingMaxEquities) {
+    public record FundRules(
+            int indexTrackingMaxEquities,
+            double indexTrackingInitialAllocationRatio,
+            double creationRedemptionPremiumThreshold
+    ) {
+        public FundRules {
+            indexTrackingMaxEquities = Math.max(0, indexTrackingMaxEquities);
+            indexTrackingInitialAllocationRatio = Math.max(0.0D, Math.min(1.0D, indexTrackingInitialAllocationRatio));
+            creationRedemptionPremiumThreshold = Math.max(0.0D, creationRedemptionPremiumThreshold);
+        }
+
         public static final Codec<FundRules> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                Codec.INT.fieldOf("index_tracking_max_equities").forGetter(FundRules::indexTrackingMaxEquities)
+                Codec.INT.fieldOf("index_tracking_max_equities").forGetter(FundRules::indexTrackingMaxEquities),
+                Codec.DOUBLE.optionalFieldOf("index_tracking_initial_allocation_ratio", 1.0D).forGetter(FundRules::indexTrackingInitialAllocationRatio),
+                Codec.DOUBLE.optionalFieldOf("creation_redemption_premium_threshold", 0.02D).forGetter(FundRules::creationRedemptionPremiumThreshold)
         ).apply(instance, FundRules::new));
     }
 
